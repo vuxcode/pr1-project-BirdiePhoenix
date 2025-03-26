@@ -9,7 +9,9 @@ The final program is not the goal! The aim of the project is to show how you hav
 
 # Project Notes
 
-> You can use this section of the file to keep notes about your project as you work on it.
+- A working chess game. It uses prompts and HTML text. There's no movement restriction for the pieces.
+- To do next:
+- Implement restrictions
 
 # Project Summary
 
