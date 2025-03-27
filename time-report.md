@@ -14,4 +14,4 @@ For example:
     - 1 to update the board
   - 2 functions
     - 1 that prints the the board
-    - 1 that controls the player turns      
+    - 1 that controls the player turns. Including prompts and if-statements.      
