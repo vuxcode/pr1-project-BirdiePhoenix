@@ -54,6 +54,9 @@ var chessBoard = [
     "A1", "B1" ,"C1", "D1", "E1", "F1", "G1", "H1"
 ]; 
 
+var whitePieces = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "r1", "r2", "b1", "b2", "n1", "n2", "qu", "ki"];
+var blackPieces = ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "R1", "R2", "B1", "B2", "N1", "N2", "Qu", "Ki"];
+
 //Stores the name of the pieces for future use. This will be used to restrict the movement of the pieces.
 var pieces = ["Pawn", "Rook", "Knight", "Bishop", "Queen", "King"];
 
@@ -69,7 +72,7 @@ var choosenPiece;
 var choosenSquare;
 
 //Checks which players turn it is.
-var whiteTurn = true; 
+var isWhiteTurn = true; 
 
 //This function is what prints the board.
 function PrintBoard()
@@ -77,13 +80,13 @@ function PrintBoard()
     var updateBoard = document.getElementById("chessBoard");
     updateBoard.innerHTML = 
     chessPieces[0] + " " + chessPieces[1] + " " + chessPieces[2] + " " + chessPieces[3] + " " + chessPieces[4] + " " + chessPieces[5] + " " + chessPieces[6] + " " + chessPieces[7] + " " + "<br>"
-    + chessPieces[8] + " "+ chessPieces[9] + " "+ chessPieces[10] + " "+ chessPieces[11] + " "+ chessPieces[12] + " "+ chessPieces[13] + " "+ chessPieces[14] + " "+ chessPieces[15] + " " + "<br>"
-    + chessPieces[16] + " "+ chessPieces[17] + " "+ chessPieces[18] + " "+ chessPieces[19] + " "+ chessPieces[20] + " "+ chessPieces[21] + " "+ chessPieces[22] + " "+ chessPieces[23] + " " + "<br>"
-    + chessPieces[24] + " "+ chessPieces[25] + " "+ chessPieces[26] + " "+ chessPieces[27] + " "+ chessPieces[28] + " "+ chessPieces[29] + " "+ chessPieces[30] + " "+ chessPieces[31] + " " + "<br>"
-    + chessPieces[32] + " "+ chessPieces[33] + " "+ chessPieces[34] + " "+ chessPieces[35] + " "+ chessPieces[36] + " "+ chessPieces[37] + " "+ chessPieces[38] + " "+ chessPieces[39] + " " + "<br>"
-    + chessPieces[40] + " "+ chessPieces[41] + " "+ chessPieces[42] + " "+ chessPieces[43] + " "+ chessPieces[44] + " "+ chessPieces[45] + " "+ chessPieces[46] + " "+ chessPieces[47] + " " + "<br>"
-    + chessPieces[48] + " "+ chessPieces[49] + " "+ chessPieces[50] + " "+ chessPieces[51] + " "+ chessPieces[52] + " "+ chessPieces[53] + " "+ chessPieces[54] + " "+ chessPieces[55] + " " + "<br>"
-    + chessPieces[56] + " "+ chessPieces[57] + " "+ chessPieces[58] + " "+ chessPieces[59] + " "+ chessPieces[60] + " "+ chessPieces[61] + " "+ chessPieces[62] + " "+ chessPieces[63] + " ";
+    + chessPieces[8] + " " + chessPieces[9] + " " + chessPieces[10] + " " + chessPieces[11] + " " + chessPieces[12] + " " + chessPieces[13] + " " + chessPieces[14] + " " + chessPieces[15] + " " + "<br>"
+    + chessPieces[16] + " " + chessPieces[17] + " " + chessPieces[18] + " " + chessPieces[19] + " " + chessPieces[20] + " " + chessPieces[21] + " " + chessPieces[22] + " " + chessPieces[23] + " " + "<br>"
+    + chessPieces[24] + " " + chessPieces[25] + " " + chessPieces[26] + " " + chessPieces[27] + " " + chessPieces[28] + " " + chessPieces[29] + " " + chessPieces[30] + " " + chessPieces[31] + " " + "<br>"
+    + chessPieces[32] + " " + chessPieces[33] + " " + chessPieces[34] + " " + chessPieces[35] + " " + chessPieces[36] + " " + chessPieces[37] + " " + chessPieces[38] + " " + chessPieces[39] + " " + "<br>"
+    + chessPieces[40] + " " + chessPieces[41] + " " + chessPieces[42] + " " + chessPieces[43] + " " + chessPieces[44] + " " + chessPieces[45] + " " + chessPieces[46] + " " + chessPieces[47] + " " + "<br>"
+    + chessPieces[48] + " " + chessPieces[49] + " " + chessPieces[50] + " " + chessPieces[51] + " " + chessPieces[52] + " " + chessPieces[53] + " " + chessPieces[54] + " " + chessPieces[55] + " " + "<br>"
+    + chessPieces[56] + " " + chessPieces[57] + " " + chessPieces[58] + " " + chessPieces[59] + " " + chessPieces[60] + " " + chessPieces[61] + " " + chessPieces[62] + " " + chessPieces[63] + " ";
 }
 
 //This function controlls the actual turns.
@@ -99,28 +102,44 @@ function TurnOrder()
         alert("Black turn");
     }
 
+    if(isWhiteTurn)
+    {
+        WhiteTurn();
+    }
+
     //Makes it possible for the players to choose piece to move and what square to move to.
-    choosenPiece = prompt("What piece do you want to move?");
+    //choosenPiece = prompt("What piece do you want to move?");
     choosenSquare = prompt("Where do you want to move the piece?");
     choosenSquare = choosenSquare.toUpperCase();
     
     //Gets the index of the chosen piece and square so we can change those places in the chessPieces array. 
     var pieceIndex = chessPieces.indexOf(choosenPiece);
     var squareIndex = chessBoard.indexOf(choosenSquare);
-
     chessPieces[pieceIndex] = "X";
     chessPieces[squareIndex] = choosenPiece;
 
     //Changes what players turn it is
-    if(whiteTurn)
+    if(isWhiteTurn)
     {
-        whiteTurn = false;  
+        isWhiteTurn = false;  
     }
     else
     {
-        whiteTurn = true;
+        isWhiteTurn = true;
     }
 }
- 
+
+function WhiteTurn()
+{
+    choosenPiece = prompt("What piece do you want to move?"); 
+}
+
+function PawnMovement()
+{
+    if(pieceIndex.includes("p"))
+    {
+
+    }
+}
 
 </script>
