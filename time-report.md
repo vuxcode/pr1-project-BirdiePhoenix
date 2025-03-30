@@ -31,5 +31,14 @@ For example:
   - 1 while-loop
     - Checks if the player wants to make a legal move and implement that to the game board
   - 1 for-loop
-    - Changed how the board is being printed, with a for-loop 
+    - Changed how the board is being printed, with a for-loop
+   
+  - 2025-03-29 15.00Worked for 2 hours.
+    - Changed name on the chessPieces array to startBoard for better workflow
+    - Changed the PawnMovement function
+      - Added diagonaly movement when an enemy piece is diagonaly in front of the pawn
+    - Fixed a bug with removing of elements in the unmovedPawns array
+    - 1 function
+      - UpgradePiece()
+      - Added so the pawns upgrades to a queen when reaching the other side of the board 
    
