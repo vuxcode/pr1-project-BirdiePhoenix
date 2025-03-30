@@ -9,8 +9,8 @@
 
 <script>
 //Stores the opening board. Capital letter stands for black and lowercase stands for white. X is an empty square.
-var chessPieces = [
-    "R1", "N1", "B1", "Qu", "Ki", "B2", "N2", "R2",
+var startBoard = [
+    "R1", "P9", "B1", "Qu", "Ki", "B2", "N2", "R2",
     "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8",
     "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
     "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
@@ -66,19 +66,17 @@ function PrintBoard()
 {
     var updateBoard = document.getElementById("chessBoard");
     updateBoard.innerHTML = " ";   
-    for(var i = 0; i < chessPieces.length; i++)
+    for(var i = 0; i < startBoard.length; i++)
     { 
         if((i + 1) % 8 == 0)
         {
             var updateBoard = document.getElementById("chessBoard");
-            updateBoard.innerHTML += chessPieces[i] + " " + "<br>";
-            console.log("New row")
+            updateBoard.innerHTML += startBoard[i] + " " + "<br>";
         }
         else
         {
             var updateBoard = document.getElementById("chessBoard");
-            updateBoard.innerHTML += chessPieces[i] + " ";
-            console.log("Same row")
+            updateBoard.innerHTML += startBoard[i] + " ";
         }
     }
 }
@@ -116,11 +114,11 @@ function TurnOrder()
         //If the move is legal the board will update.
         if(legalMoves.includes(chosenSquare))
         {
-            //Gets the indexes of the chosen piece and square so we can change those places in the chessPieces array. 
-            pieceIndex = chessPieces.indexOf(chosenPiece);
+            //Gets the indexes of the chosen piece and square so we can change those places in the startBoard array. 
+            pieceIndex = startBoard.indexOf(chosenPiece);
             squareIndex = chessBoard.indexOf(chosenSquare);
-            chessPieces[pieceIndex] = "[]";
-            chessPieces[squareIndex] = chosenPiece;
+            startBoard[pieceIndex] = "[]";
+            startBoard[squareIndex] = chosenPiece;
             isLegalMove = true;
         }
         else
@@ -128,6 +126,9 @@ function TurnOrder()
             alert("That is not a legal move!");
         }
     }
+
+    //The UpgradePiece function checks if the piece should be upgraded
+    UpgradePiece();
 
     //Resets the legalMoves properties.
     isLegalMove = false;   
@@ -222,7 +223,7 @@ function BlackTurn()
 //Depending on wich players turn it is there will be a different equation.
 function PawnMovement()
 {
-    var moves = chessPieces.indexOf(chosenPiece);
+    var moves = startBoard.indexOf(chosenPiece);
     if(isWhiteTurn)
     {
         legalMoves.push(chessBoard[moves-8]);
@@ -230,6 +231,25 @@ function PawnMovement()
         if(unmovedPawns.includes(chosenPiece))
         {
             legalMoves.push(chessBoard[moves - 16]);
+        }
+
+        //Checks if there is a piece UP diagonaly to the RIGHT of the pawn
+        if(startBoard[moves-7] != "[]")
+        {
+            //If the chosen pawn isn't on the H-row, wich all +1 is devisble by 8, the square should be added to the legalMoves array 
+            if((moves + 1) % 8 != 0)
+            {
+                legalMoves.push(chessBoard[moves-7]);
+            }  
+        }
+        //Checks if there is a piece UP diagonaly to the LEFT of the pawn
+        if(startBoard[moves-9] != "[]")
+        {
+            //If the chosen pawn isn't on the A-row, wich all is devisble by 8, the square should be added to the legalMoves array
+            if((moves) % 8 != 0)
+            {
+                legalMoves.push(chessBoard[moves-9]);
+            } 
         }
     }
     else
@@ -240,10 +260,33 @@ function PawnMovement()
         {
             legalMoves.push(chessBoard[moves + 16]);
         }
+
+        //Checks if there is a piece DOWN diagonaly to the LEFT of the pawn
+        if(startBoard[moves+7] != "[]")
+        {
+            //If the chosen pawn isn't on the A-row, wich all is devisble by 8, the square should be added to the legalMoves array 
+            if((moves) % 8 != 0)
+            {
+                legalMoves.push(chessBoard[moves+7]);
+            }  
+        }
+        //Checks if there is a piece DOWN diagonaly to the RIGHT of the pawn
+        if(startBoard[moves+9] != "[]")
+        {
+            //If the chosen pawn isn't on the A-row, wich all is devisble by 8, the square should be added to the legalMoves array
+            if((moves+1) % 8 != 0)
+            {
+                legalMoves.push(chessBoard[moves+9]);
+            } 
+        }
     }
 
-    //Removes the chosen pawn from the unmovedPawns array.
-    unmovedPawns.splice(chosenPiece, 1);
+    //Checks if the moved pawn is in the unmovedPawns array and if it is it gets removed
+    if(unmovedPawns.includes(chosenPiece))
+    {
+        //Removes the chosen pawn from the unmovedPawns array.
+        unmovedPawns.splice(unmovedPawns.indexOf(chosenPiece), 1);
+    }
 }
 
 function RookMovement()
@@ -304,6 +347,29 @@ function KingMovement()
     else
     {
         
+    }
+}
+
+//CHANGE THIS WHEN IMPLEMENTING POWERUPS
+//This function upgrades the pawns into a queen when reaching the end of the board
+function UpgradePiece()
+{
+    //Checks if the chosenPiece includes p or P
+    if(chosenPiece.includes("p") || chosenPiece.includes("P"))
+    {
+        //Checks if the pawn has reached the top row (index <= 7) or the bottom row (index >= 56)
+        if(startBoard.indexOf(chosenPiece) <= 7 || startBoard.indexOf(chosenPiece) >= 56)
+        {
+            //Checks if it is a white or a black piece
+            if(chosenPiece.includes("p"))
+            {
+                startBoard[startBoard.indexOf(chosenPiece)] = "qu";   
+            } 
+            else if(chosenPiece.includes("P"))
+            {
+                startBoard[startBoard.indexOf(chosenPiece)] = "Qu";
+            }
+        }
     }
 }
 </script>
