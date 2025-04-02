@@ -36,7 +36,7 @@ var chessBoard = [
 var unmovedPawns = ["p1", "p2", "p3", "p4", "p5","p6", "p7", "p8", "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"];
 
 var whitePieces = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "r1", "r2", "b1", "b2", "n1", "n2", "qu", "ki"];
-var blackPieces = ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "R1", "R2", "B1", "B2", "N1", "N2", "Qu", "Ki"];
+var blackPieces = ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "R1", "R2", "B1", "B2", "N1", "N2", "QU", "KI"];
 
 //Makes it possible for the program to check if the players wants to make an illegal move.
 var legalMoves = [];
@@ -221,6 +221,7 @@ function BlackTurn()
     }
 }
 
+//ADD SO THE PAWN CAN MOVE DIAGONALY IF ADJACENT PAWN MOVED TWO SQUARES
 //Controls the pawn movement.
 //Depending on wich players turn it is there will be a different equation.
 function PawnMovement()
@@ -293,14 +294,139 @@ function PawnMovement()
 
 function RookMovement()
 {
-    
+    var moves = startBoard.indexOf(chosenPiece);
     if(isWhiteTurn)
     {
         
     }
-    else
+    else //Black turn
     {
-        
+        //Checks if the rook can move to the RIGHT
+        if((moves + 1) % 8 != 0 && !blackPieces.includes(startBoard[moves+1]))
+        {
+            if(whitePieces.includes(startBoard[moves+1]))
+            {
+                moves++;
+                legalMoves.push(chessBoard[moves]);
+            }
+            else
+            {
+                moves++;
+                legalMoves.push(chessBoard[moves]);
+                
+                while(startBoard[moves+1] == "[]" || whitePieces.includes(startBoard[moves+1]))
+                {
+                    if(whitePieces.includes(startBoard[moves+1]))
+                    {
+                        moves++;
+                        legalMoves.push(chessBoard[moves]);
+                        break;
+                    }
+                    moves++;
+                    legalMoves.push(chessBoard[moves]);
+                    if((moves + 1) % 8 == 0 || blackPieces.includes(startBoard[moves+1]) )
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        moves = startBoard.indexOf(chosenPiece);
+
+        //Checks if the rook can move to the LEFT
+        if(((moves) % 8 != 0 || moves != 0) && !blackPieces.includes(startBoard[moves-1]))
+        {
+            //If the square to the LEFT contains a WHITE piece only that square is added to legalMoves
+            if(whitePieces.includes(startBoard[moves-1]))
+            {
+                moves--;
+                legalMoves.push(chessBoard[moves]); 
+            }
+            else
+            {
+                moves--;
+                legalMoves.push(chessBoard[moves]);
+                
+                while(startBoard[moves-1] == "[]" || whitePieces.includes(startBoard[moves-1]))
+                {
+                    if(whitePieces.includes(startBoard[moves-1]))
+                    {
+                        moves--;
+                        legalMoves.push(chessBoard[moves]);
+                        break;
+                    }
+                    moves--;
+                    legalMoves.push(chessBoard[moves]);
+                    if((moves) % 8 == 0 || blackPieces.includes(startBoard[moves-1]))
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        moves = startBoard.indexOf(chosenPiece);
+
+        //Checks if the rook can move DOWN. If it is >= 56 it is on the bottom line.
+        if((startBoard.indexOf(chosenPiece) < 56) && !blackPieces.includes(startBoard[moves+8]))
+        {
+            if(whitePieces.includes(startBoard[moves+8]))
+            {
+                moves+=8;
+                legalMoves.push(chessBoard[moves]);
+            }
+            else
+            {
+                moves+=8;
+                legalMoves.push(chessBoard[moves]);
+
+                while(startBoard[moves+8] == "[]" || whitePieces.includes(startBoard[moves+8]))
+                {
+                    if(whitePieces.includes(startBoard[moves+8]))
+                    {
+                        moves+=8;
+                        legalMoves.push(chessBoard[moves]);
+                        break;
+                    }
+                    moves+=8;
+                    legalMoves.push(chessBoard[moves]);
+                    if(moves >= 56 || blackPieces.includes(startBoard[moves+8]))
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        moves = startBoard.indexOf(chosenPiece);
+
+        if((startBoard.indexOf(chosenPiece) > 7) && !blackPieces.includes(startBoard[moves-8]))
+        {
+            if(whitePieces.includes(startBoard[moves-8]))
+            {
+                moves-=8;
+                legalMoves.push(chessBoard[moves]);
+            }
+            else
+            {
+                moves-=8;
+                legalMoves.push(chessBoard[moves]);
+
+                while(startBoard[moves-8] == "[]" || whitePieces.includes(startBoard[moves-8]))
+                {
+                    if(whitePieces.includes(startBoard[moves-8]))
+                    {
+                        moves-=8;
+                        legalMoves.push(chessBoard[moves]);
+                        break;
+                    }
+                    moves-=8;
+                    legalMoves.push(chessBoard[moves]);
+                    if(moves <= 7 || blackPieces.includes(startBoard[startBoard[moves-8]]))
+                    {
+                        break;
+                    }
+                }
+            }
+        } 
     }
 }
 
