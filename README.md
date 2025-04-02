@@ -11,7 +11,11 @@ The final program is not the goal! The aim of the project is to show how you hav
 
 - A working chess game. It uses prompts and HTML text. There's no movement restriction for the pieces.
 - To do next:
-- Implement restrictions
+  - Implement restrictions
+- Movement restrictions for pawns and rooks
+- To do next:
+  - Implement restrictions for white rooks
+  - Implement a way for the program to tell the player a piece can't be moved     
 
 # Project Summary
 
