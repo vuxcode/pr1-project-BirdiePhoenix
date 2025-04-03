@@ -33,12 +33,20 @@ For example:
   - 1 for-loop
     - Changed how the board is being printed, with a for-loop
    
-  - 2025-03-29 15.00Worked for 2 hours.
+  - 2025-03-29 15.00 Worked for 2 hours.
     - Changed name on the chessPieces array to startBoard for better workflow
     - Changed the PawnMovement function
       - Added diagonaly movement when an enemy piece is diagonaly in front of the pawn
     - Fixed a bug with removing of elements in the unmovedPawns array
     - 1 function
       - UpgradePiece()
-      - Added so the pawns upgrades to a queen when reaching the other side of the board 
+      - Added so the pawns upgrades to a queen when reaching the other side of the board
+     
+  - 2025-04-02 12.30 worked for 4 hours
+    - Changed the UpgradePiece function so the player gets to chose what piece they want to upgrade the pawn to
+    - Implemented movement restrictions for the black rooks
+      - Contains 4 if-statements, 1 for each direction
+      - It checks if there is a free square or an enemy pawn next to the piece and adds that square to the legalMoves array
+      - Then by using a while loop it does that for every square until it hits a "stop"
+    
    
