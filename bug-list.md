@@ -11,3 +11,5 @@
    Solution: Check if there is a piece of the same color on the square
 6. Problem: If the rooks where on the top or bottom rows it said that the blackPieces array was not defined
    Solution: I added that the program should check if the piece where on the top or bottom line in the "break" if-statement
+7. Problem: The white rooks could move like the black pieces. I had just copied the black movement and only changed the numbers.
+   Solution: I changed all the instances of whitePieces to blackPieces and all the instances of blackPieces to whitePieces
