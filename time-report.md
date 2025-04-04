@@ -48,5 +48,14 @@ For example:
       - Contains 4 if-statements, 1 for each direction
       - It checks if there is a free square or an enemy pawn next to the piece and adds that square to the legalMoves array
       - Then by using a while loop it does that for every square until it hits a "stop"
+     
+  - 2025-04-03 14.30 Worked for 2.5 hours
+    - Cleaned up the code in Rook Function
+      - 2 new variables so I could shorten the code
+        - enemyPiece
+        - friendlyPiece
+        - Depending on what players turn it is the two variable is assigned to the whitePieces and blackPieces arrays 
+    - Bugfixes
+      - The rook-movement was wrong, they could move to places where they were not supposed to be able to move to
     
    
