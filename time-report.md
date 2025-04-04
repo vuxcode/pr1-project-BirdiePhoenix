@@ -57,5 +57,7 @@ For example:
         - Depending on what players turn it is the two variable is assigned to the whitePieces and blackPieces arrays 
     - Bugfixes
       - The rook-movement was wrong, they could move to places where they were not supposed to be able to move to
+     
+  - 2025-04-04 15.00 Worked for 2 hours
     
    
