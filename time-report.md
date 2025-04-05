@@ -59,5 +59,15 @@ For example:
       - The rook-movement was wrong, they could move to places where they were not supposed to be able to move to
      
   - 2025-04-04 15.00 Worked for 2 hours
+    - 4 functions
+      - KnightMovement
+        - Contains 8 if-statements
+      - BishopMovement
+        - Contains 4 if-statements with a while-loop in each
+      - KingMovement
+        - Contains 8 if-statements. 1 for each direction
+      - QueenMovement
+        - Contains 2 function-referenses, 1 to RookMovement and 1 to BishopMovement
+    - Removed unnecessary code from the RookMovement function    
     
    
