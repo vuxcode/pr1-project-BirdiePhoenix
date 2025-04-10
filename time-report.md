@@ -74,5 +74,10 @@ For example:
     - Checked if the movement of the pieces works
       - Fixed bugs:
         - Bishops and Rooks; the while-loops added squares to the legalMoves-array above or under the squareNames index range
+       
+  - 2025-04-10 11.30
+    - 1 function
+      - Created the PieceChooser function
+      - This was made so that the player is not asked again what piece they want to move when the program is checking for what squares the king would be in check
     
    
