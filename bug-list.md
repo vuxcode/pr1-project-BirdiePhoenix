@@ -13,3 +13,5 @@
    Solution: I added that the program should check if the piece where on the top or bottom line in the "break" if-statement
 7. Problem: The white rooks could move like the black pieces. I had just copied the black movement and only changed the numbers.
    Solution: I changed all the instances of whitePieces to blackPieces and all the instances of blackPieces to whitePieces
+8. Problem: In the BishopMovement-function the while-loops added squares to the legalMoves-array above or under the squareNames index range.
+   Solution: Made the while-loops check if possibleMoves +/- x is larger than 0 or smaller than 63
