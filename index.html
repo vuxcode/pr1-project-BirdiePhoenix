@@ -120,6 +120,8 @@ function TurnOrder()
         BlackTurn();
     }
 
+    console.log(legalMoves);
+
     //A loop that will continue as long as the player atempts an illegal move.
     while(isLegalMove == false)
     {
@@ -168,6 +170,8 @@ function TurnOrder()
     {
         isWhiteTurn = true;
     }
+
+    PrintBoard();
 }
 
 //Controls the white players turn.
@@ -304,9 +308,6 @@ function PawnMovement()
                 legalMoves.push(squareNames[possibleMoves-9]);
             } 
         }
-
-        console.log(legalMoves.length);
-        console.log(legalMoves);
     }
     else //Black
     {
@@ -496,7 +497,8 @@ function BishopMovement()
     //If the piece is not on the edge and there is no friendly piece UP-RIGHT
     if((possibleMoves+1) % 8 != 0 && chessBoard.indexOf(chosenPiece) > 7 && !friendlyPieces.includes(chessBoard[possibleMoves-7]))
     {
-        while((possibleMoves+1) % 8 != 0 && chessBoard.indexOf(chosenPiece) > 7 && !friendlyPieces.includes(chessBoard[possibleMoves-7]))
+        console.log("Checking Up-Right");
+        while((possibleMoves+1) % 8 != 0 && possibleMoves-7 >= 0 && !friendlyPieces.includes(chessBoard[possibleMoves-7]))
         {
             if(enemyPieces.includes(chessBoard[possibleMoves-7]))
             {
@@ -514,7 +516,8 @@ function BishopMovement()
     //If the piece is not on the edge and there is no friendly piece UP-LEFT
     if(possibleMoves % 8 != 0 && chessBoard.indexOf(chosenPiece) > 7 && !friendlyPieces.includes(chessBoard[possibleMoves-9]))
     {
-        while(possibleMoves % 8 != 0 && chessBoard.indexOf(chosenPiece) > 7 && !friendlyPieces.includes(chessBoard[possibleMoves-9]))
+        console.log("Checking Up-Left");
+        while(possibleMoves % 8 != 0 && possibleMoves-9 >= 0 && !friendlyPieces.includes(chessBoard[possibleMoves-9]))
         {
             if(enemyPieces.includes(chessBoard[possibleMoves-9]))
             {
@@ -532,7 +535,8 @@ function BishopMovement()
     //If the piece is not on the edge and there is no friendly piece DOWN-RIGHT
     if((possibleMoves+1) % 8 != 0 && chessBoard.indexOf(chosenPiece) < 56 && !friendlyPieces.includes(chessBoard[possibleMoves+9]))
     {
-        while((possibleMoves+1) % 8 != 0 && chessBoard.indexOf(chosenPiece) < 56 && !friendlyPieces.includes(chessBoard[possibleMoves+9]))
+        console.log("Checking Down-Right");
+        while((possibleMoves+1) % 8 != 0 && possibleMoves+9 <= 63 && !friendlyPieces.includes(chessBoard[possibleMoves+9]))
         {
             if(enemyPieces.includes(chessBoard[possibleMoves+9]))
             {
@@ -550,7 +554,8 @@ function BishopMovement()
     //If the piece is not on the edge and there is no friendly piece DOWN-LEFT
     if(possibleMoves % 8 != 0 && chessBoard.indexOf(chosenPiece) < 56 && !friendlyPieces.includes(chessBoard[possibleMoves+7]))
     {
-        while(possibleMoves % 8 != 0 && chessBoard.indexOf(chosenPiece) < 56 && !friendlyPieces.includes(chessBoard[possibleMoves+7]))
+        console.log("Checking Down-Left");
+        while(possibleMoves % 8 != 0 && possibleMoves+7 <= 63 && !friendlyPieces.includes(chessBoard[possibleMoves+7]))
         {
             if(enemyPieces.includes(chessBoard[possibleMoves+7]))
             {
@@ -603,6 +608,7 @@ function KingMovement()
         possibleMoves-=8;
         legalMoves.push(squareNames[possibleMoves]);
     } 
+    possibleMoves = chessBoard.indexOf(chosenPiece);
 
     //Checks if the KING can move UP-RIGHT. 
     //If the piece is not on the edge and there is no friendly piece UP-RIGHT
