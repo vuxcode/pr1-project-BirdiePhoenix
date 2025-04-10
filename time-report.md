@@ -77,5 +77,9 @@ For example:
     - 1 function
       - Created the PieceChooser function
       - This was made so that the player is not asked again what piece they want to move when the program is checking for what squares the king would be in check
+  - 2025-04-10 16.00
+    - 1 function
+      - Merged the WhiteTurn- and the BlackTurn-functions to the MovementManager-function
+      - This was made to get lesser code. Instead of having two function doing pretty much the same thing, now only one function mange it instead
     
    
