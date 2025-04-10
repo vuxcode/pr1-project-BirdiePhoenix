@@ -70,9 +70,9 @@ For example:
         - Contains 2 function-referenses, 1 to RookMovement and 1 to BishopMovement
     - Removed unnecessary code from the RookMovement function
    
-  - 2025-04-10 8.00
+  - 2025-04-10 8.00 Worked for 2 hours
     - Checked if the movement of the pieces works
       - Fixed bugs:
-        - Bishops; the while-loops added squares to the legalMoves-array above or under the squareNames index range
+        - Bishops and Rooks; the while-loops added squares to the legalMoves-array above or under the squareNames index range
     
    
