@@ -389,7 +389,7 @@ function RookMovement()
     {
         legalMoves.push("Checking Down");
 
-        while((chessBoard.indexOf(chosenPiece) < 56) && !friendlyPieces.includes(chessBoard[possibleMoves+8]))
+        while(possibleMoves+8 <= 63 && !friendlyPieces.includes(chessBoard[possibleMoves+8]))
         {
             if(enemyPieces.includes(chessBoard[possibleMoves+8]))
             {
@@ -408,7 +408,7 @@ function RookMovement()
     {
         legalMoves.push("Checking UP");
         
-        while(chessBoard.indexOf(chosenPiece) > 7 && !friendlyPieces.includes(chessBoard[possibleMoves-8]))
+        while(possibleMoves-8 >= 0 && !friendlyPieces.includes(chessBoard[possibleMoves-8]))
         {
             if(enemyPieces.includes(chessBoard[possibleMoves-8]))
             {
