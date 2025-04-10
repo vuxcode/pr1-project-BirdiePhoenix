@@ -68,6 +68,11 @@ For example:
         - Contains 8 if-statements. 1 for each direction
       - QueenMovement
         - Contains 2 function-referenses, 1 to RookMovement and 1 to BishopMovement
-    - Removed unnecessary code from the RookMovement function    
+    - Removed unnecessary code from the RookMovement function
+   
+  - 2025-04-10 8.00
+    - Checked if the movement of the pieces works
+      - Fixed bugs:
+        - Bishops; the while-loops added squares to the legalMoves-array above or under the squareNames index range
     
    
