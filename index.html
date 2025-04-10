@@ -63,12 +63,15 @@ var pieceIndex;
 var squareIndex;
 var enemyPieces;
 var friendlyPieces;
+var kingSlayer = "KingSlayer";
 
 
 var upgradeTo;
 
 //Checks which players turn it is.
 var isWhiteTurn = true; 
+
+PrintBoard();
 
 //This function is what prints the board.
 function PrintBoard()
@@ -179,85 +182,40 @@ function PieceChooser()
     if(isWhiteTurn)
     {
         chosenPiece = chosenPiece.toLowerCase();
-        WhiteTurn();
     }
     else
     {
         chosenPiece = chosenPiece.toUpperCase();
-        BlackTurn();
-    }  
+    } 
+    
+    MovementManager(); 
 }
 
 //Controls the white players turn.
 //Depending on the players answer the program will go to the right function
-function WhiteTurn()
+function MovementManager()
 {
-    if(chosenPiece.includes("p"))
+    if(chosenPiece.includes("p") || kingSlayer.includes("p") || chosenPiece.includes("P") || kingSlayer.includes("P"))
     {
         PawnMovement();
     }
-    else if(chosenPiece.includes("r"))
+    else if(chosenPiece.includes("r") || kingSlayer.includes("r") || chosenPiece.includes("R") || kingSlayer.includes("R"))
     {
         RookMovement();
     }
-    else if(chosenPiece.includes("n"))
+    else if(chosenPiece.includes("n") || kingSlayer.includes("n") || chosenPiece.includes("N") || kingSlayer.includes("N"))
     {
         KnightMovement();
     }
-    else if(chosenPiece.includes("b"))
+    else if(chosenPiece.includes("b") || kingSlayer.includes("b") || chosenPiece.includes("B") || kingSlayer.includes("B"))
     {
         BishopMovement();
     }
-    else if(chosenPiece.includes("k"))
+    else if(chosenPiece.includes("k") || kingSlayer.includes("k") || chosenPiece.includes("K") || kingSlayer.includes("K"))
     {
         KingMovement();
     }
-    else if(chosenPiece.includes("q"))
-    {
-        QueenMovement();
-    }
-    else
-    {
-        /*var infoText = getElementById("info");
-        infotext.innerHTML = "That is not a valid piece!";*/
-        alert("That is not a valid piece!");
-        PieceChooser();
-    }
-
-    if(legalMoves.length == 0)
-    {
-        /*var infoText = getElementById("info");
-        infotext.innerHTML = "That is not a valid piece!";*/
-        alert("You can not move that piece this turn!");
-        PieceChooser();
-    }
-}
-
-//Controls the black players turn.
-//Depending on the players answer the program will go to the right function
-function BlackTurn()
-{
-    if(chosenPiece.includes("P"))
-    {
-        PawnMovement();
-    }
-    else if(chosenPiece.includes("R"))
-    {
-        RookMovement();
-    }
-    else if(chosenPiece.includes("N"))
-    {
-        KnightMovement();
-    }
-    else if(chosenPiece.includes("B"))
-    {
-        BishopMovement();
-    }
-    else if(chosenPiece.includes("K"))
-    {
-        KingMovement();
-    }
-    else if(chosenPiece.includes("Q"))
+    else if(chosenPiece.includes("q") || kingSlayer.includes("q") || chosenPiece.includes("Q") || kingSlayer.includes("Q"))
     {
         QueenMovement();
     }
@@ -283,7 +241,15 @@ function BlackTurn()
 //Depending on wich players turn it is there will be a different equation.
 function PawnMovement()
 {
-    var possibleMoves = chessBoard.indexOf(chosenPiece);
+    if(chosenPiece == "ki" || chosenPiece == "KI")
+    {
+        var possibleMoves = chessBoard.indexOf(kingSlayer);
+    }
+    else
+    {
+        var possibleMoves = chessBoard.indexOf(chosenPiece);
+    }
+    
     if(isWhiteTurn)
     {
         if(chessBoard[possibleMoves-8] == "[]")
