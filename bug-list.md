@@ -15,3 +15,4 @@
    Solution: I changed all the instances of whitePieces to blackPieces and all the instances of blackPieces to whitePieces
 8. Problem: In the BishopMovement- and RookMovement-functions the while-loops added squares to the legalMoves-array above or under the squareNames index range.
    Solution: Made the while-loops check if possibleMoves +/- x is larger than 0 or smaller than 63
+9. Problem: When changing the chosenPiece-variable into the pieceVar-variable bugs appeard becaus i didn't change it on all places needed
