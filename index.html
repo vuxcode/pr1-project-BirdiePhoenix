@@ -4,9 +4,9 @@
 <h1>CHESS</h1>
 <h3 id="info1">Welcome to Chess. White is lowercase and black is uppercase. <br></h3>
 <h3 id="squareNames"><br></h3>
+<h3 id="info2">Press to start the game</h3>
 <button id="startButton">Start Game</button>
 <button id="turnButton">Take Turn</button>
-<button id="updateButton">Update Board</button>
 
 <script>
 //Stores the opening board. Capital letter stands for black and lowercase stands for white. X is an empty square.
@@ -57,10 +57,6 @@ startButton.addEventListener("click", StartGame)
 var turnButton = document.getElementById("turnButton");
 turnButton.addEventListener("click", TurnOrder); 
 turnButton.style.display = "none";
-//This button updates the board.
-var updateButton = document.getElementById("updateButton");
-updateButton.addEventListener("click", PrintBoard); 
-updateButton.style.display = "none";
 
 var infoText1 = document.getElementById("info1");
 
@@ -107,7 +103,6 @@ function StartGame()
 {
     startButton.style.display = "none";
     turnButton.style.display = "block";
-    updateButton.style.display = "block";
 }
 
 //This function controlls the actual turns.
