@@ -2,10 +2,11 @@
 
 <style> * {font-family: monospace;}</style>
 <h1>CHESS</h1>
-<h3 id="info">Welcome to Chess. White is lowercase and black is uppercase. <br></h3>
+<h3 id="info1">Welcome to Chess. White is lowercase and black is uppercase. <br></h3>
 <h3 id="squareNames"><br></h3>
+<button id="startButton">Start Game</button>
 <button id="turnButton">Take Turn</button>
-<button id="updateBoard">Update Board</button>
+<button id="updateButton">Update Board</button>
 
 <script>
 //Stores the opening board. Capital letter stands for black and lowercase stands for white. X is an empty square.
@@ -49,12 +50,19 @@ var checkSquares = [];
 //Stores the name of the pieces for future use. This will be used to restrict the movement of the pieces.
 var pieces = ["Pawn", "Rook", "Knight", "Bishop", "Queen", "King"];
 
+//This button starts the game
+var startButton = document.getElementById("startButton");
+startButton.addEventListener("click", StartGame)
 //This button starts the next turn.
 var turnButton = document.getElementById("turnButton");
 turnButton.addEventListener("click", TurnOrder); 
+turnButton.style.display = "none";
 //This button updates the board.
-var updateBoard = document.getElementById("updateBoard");
-updateBoard.addEventListener("click", PrintBoard); 
+var updateButton = document.getElementById("updateButton");
+updateButton.addEventListener("click", PrintBoard); 
+updateButton.style.display = "none";
+
+var infoText1 = document.getElementById("info1");
 
 //Variables for the choosen piece and square to move to.
 var chosenPiece;
@@ -95,6 +103,13 @@ function PrintBoard()
     }
 }
 
+function StartGame()
+{
+    startButton.style.display = "none";
+    turnButton.style.display = "block";
+    updateButton.style.display = "block";
+}
+
 //This function controlls the actual turns.
 function TurnOrder()
 {
@@ -112,11 +127,11 @@ function TurnOrder()
     //Notifies wich players turn it is.
     if(isWhiteTurn)
     {
-       alert("White turn."); 
+        infoText1.innerHTML = "White turn."; 
     }
     else
     {
-        alert("Black turn");
+        infoText1.innerHTML = "Black turn";
     }
 
     PieceChooser();
