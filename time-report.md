@@ -81,5 +81,13 @@ For example:
     - 1 function
       - Merged the WhiteTurn- and the BlackTurn-functions to the MovementManager-function
       - This was made to get lesser code. Instead of having two function doing pretty much the same thing, now only one function mange it instead
+     
+  - 2025-04-11 9.00 Worked for 2 hours
+    - 2 variable
+      - pieceVar
+      - kingSlayer
+        - to be able to check for check the program needs to run through all the enemies possible moves to determine which ones that would make the king check.
+        - therefore I had to make a varible that could change depending on if the program needs to check for the possible moves a piece can make (chosenPiece)
+        - or if the program needs to determine wich enemy pieces that could make the king check (kingSlayer)
     
    
