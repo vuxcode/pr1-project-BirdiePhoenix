@@ -89,5 +89,14 @@ For example:
         - to be able to check for check the program needs to run through all the enemies possible moves to determine which ones that would make the king check.
         - therefore I had to make a varible that could change depending on if the program needs to check for the possible moves a piece can make (chosenPiece)
         - or if the program needs to determine wich enemy pieces that could make the king check (kingSlayer)
+       
+  - 2025-04-11 13.30 Worked for 2 hours
+    - Tried to insert a textbox and rearrange the buttons
+      - It didn't go well so I had to restart from the last save and take it step by step
+    - Added 1 Start button and 1 function
+      - It activates a StartGame-function wich hides the startbutton and shows the TakeTurn-button
+    - Removed the updateBoard-button since the board now updates automaticly
+    - Added 1 more infotext in preparations to replace the prompts with textboxes
+    - Changed so the player turns now shows in HTML in the info text at the top instead of showing up as prompts  
     
    
