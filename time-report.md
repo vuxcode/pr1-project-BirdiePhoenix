@@ -99,4 +99,7 @@ For example:
     - Added 1 more infotext in preparations to replace the prompts with textboxes
     - Changed so the player turns now shows in HTML in the info text at the top instead of showing up as prompts  
     
-   
+   - 2025-04-12 11.30
+     - Added a textbox
+     - Made it possible to change the second infotext
+     - Changed the prompt that asked for what piece to innerHTML 
