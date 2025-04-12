@@ -5,6 +5,7 @@
 <h3 id="info1">Welcome to Chess. White is lowercase and black is uppercase. <br></h3>
 <h3 id="squareNames"><br></h3>
 <h3 id="info2">Press to start the game</h3>
+<input id="output" type="text"> <br>
 <button id="startButton">Start Game</button>
 <button id="turnButton">Take Turn</button>
 
@@ -58,7 +59,14 @@ var turnButton = document.getElementById("turnButton");
 turnButton.addEventListener("click", TurnOrder); 
 turnButton.style.display = "none";
 
+//Gives information about what players turn it is and what color is upper- and lowercase
 var infoText1 = document.getElementById("info1");
+//Gives information about what the players should write in the text box and if the player writes an invalid input
+var infoText2 = document.getElementById("info2");
+
+//A textbox where the players can write what piece they want to move and where they want to move it
+var output = document.getElementById("output");
+output.style.display = "none";
 
 //Variables for the choosen piece and square to move to.
 var chosenPiece;
@@ -103,6 +111,9 @@ function StartGame()
 {
     startButton.style.display = "none";
     turnButton.style.display = "block";
+    output.style.display = "block";
+    infoText1.innerHTML = "White turn."; 
+    infoText2.innerHTML = "What piece do you want to move?";
 }
 
 //This function controlls the actual turns.
@@ -137,7 +148,9 @@ function TurnOrder()
     while(isLegalMove == false)
     {
         //Updates the chosenSquare variable depending on the players answer.
-        chosenSquare = prompt("Where do you want to move the piece?");
+        
+        infoText2.innerHTML = "Where do you want to move the piece?";
+        chosenSquare = prompt();
         chosenSquare = chosenSquare.toUpperCase();
 
         //If the move is legal the board will update.
