@@ -18,3 +18,5 @@
 9. Problem: When changing the chosenPiece-variable into the pieceVar-variable bugs appeard becaus i didn't change it on all places needed
 10. Problem: A lot of bugs when I tried to replace the prompts and alerts with html.
     Solution: Had to go back to the last saved version.
+11. Problem: Runned into some bugs when adding the textbox
+    Solution: I hade to create some new functions and rearrange what some of the function does so it could work with the textbox and the buttons
