@@ -7,7 +7,8 @@
 <h3 id="info2">Press to start the game</h3>
 <input id="output" type="text"> <br>
 <button id="startButton">Start Game</button>
-<button id="turnButton">Take Turn</button>
+<button id="pieceButton">Confirm Piece</button>
+<button id="squareButton">Confirm Square</button>
 
 <script>
 //Stores the opening board. Capital letter stands for black and lowercase stands for white. X is an empty square.
@@ -54,10 +55,14 @@ var pieces = ["Pawn", "Rook", "Knight", "Bishop", "Queen", "King"];
 //This button starts the game
 var startButton = document.getElementById("startButton");
 startButton.addEventListener("click", StartGame)
-//This button starts the next turn.
-var turnButton = document.getElementById("turnButton");
-turnButton.addEventListener("click", TurnOrder); 
-turnButton.style.display = "none";
+//This button confirms the piece choice.
+var pieceButton = document.getElementById("pieceButton");
+pieceButton.addEventListener("click", PieceChooser); 
+pieceButton.style.display = "none";
+//This button confirms the square choice.
+var squareButton = document.getElementById("squareButton");
+squareButton.addEventListener("click", SquareChooser);
+squareButton.style.display = "none";
 
 //Gives information about what players turn it is and what color is upper- and lowercase
 var infoText1 = document.getElementById("info1");
@@ -110,10 +115,11 @@ function PrintBoard()
 function StartGame()
 {
     startButton.style.display = "none";
-    turnButton.style.display = "block";
+    squareButton.style.display = "none";
+    pieceButton.style.display = "block";
     output.style.display = "block";
-    infoText1.innerHTML = "White turn."; 
-    infoText2.innerHTML = "What piece do you want to move?";
+
+    TurnOrder();
 }
 
 //This function controlls the actual turns.
@@ -140,35 +146,65 @@ function TurnOrder()
         infoText1.innerHTML = "Black turn";
     }
 
-    PieceChooser();
-
+    //Updates the chosenPiece variable depending on the players answer.
+    //chosenPiece = prompt("What piece do you want to move?");
+    infoText2.innerHTML = "What piece do you want to move?";
     console.log(legalMoves);
+}
 
-    //A loop that will continue as long as the player atempts an illegal move.
-    while(isLegalMove == false)
+function PieceChooser()
+{
+    chosenPiece = output.value;
+    //Depending on whhat players turn it is the program goes to different functions.
+    if(isWhiteTurn)
     {
-        //Updates the chosenSquare variable depending on the players answer.
-        
-        infoText2.innerHTML = "Where do you want to move the piece?";
-        chosenSquare = prompt();
-        chosenSquare = chosenSquare.toUpperCase();
-
-        //If the move is legal the board will update.
-        if(legalMoves.includes(chosenSquare))
-        {
-            //Gets the indexes of the chosen piece and square so we can change those places in the chessBoard array. 
-            pieceIndex = chessBoard.indexOf(pieceVar);
-            squareIndex = squareNames.indexOf(chosenSquare);
-            chessBoard[pieceIndex] = "[]";
-            chessBoard[squareIndex] = pieceVar;
-            isLegalMove = true;
-        }
-        else
-        {
-            alert("That is not a legal move!");
-        }
+        chosenPiece = chosenPiece.toLowerCase();
     }
+    else
+    {
+        chosenPiece = chosenPiece.toUpperCase();
+    } 
 
+    pieceVar = chosenPiece;
+    chosenArray = legalMoves;
+
+    MovementManager();
+    BetweenPieceAndSquare();
+}
+
+function BetweenPieceAndSquare()
+{
+    pieceButton.style.display = "none";
+    squareButton.style.display = "block";
+    infoText2.innerHTML = "Where do you want to move the piece?";
+}
+
+function SquareChooser()
+{
+    //Updates the chosenSquare variable depending on the players answer.
+    chosenSquare = output.value;
+    chosenSquare = chosenSquare.toUpperCase();
+
+    //If the move is legal the board will update.
+    if(legalMoves.includes(chosenSquare))
+    {
+        //Gets the indexes of the chosen piece and square so we can change those places in the chessBoard array. 
+        pieceIndex = chessBoard.indexOf(pieceVar);
+        squareIndex = squareNames.indexOf(chosenSquare);
+        chessBoard[pieceIndex] = "[]";
+        chessBoard[squareIndex] = pieceVar;
+        isLegalMove = true;
+        EndTurn();
+    }
+    else
+    {
+        infoText2.innerHTML = "That is not a valid move";
+        BetweenPieceAndSquare();
+    }
+}
+
+function EndTurn()
+{
     //The UpgradePiece function checks if the piece should be upgraded
     UpgradePiece();
 
@@ -197,27 +233,7 @@ function TurnOrder()
 
     PrintBoard();
     CheckChecker();
-}
-
-function PieceChooser()
-{
-    //Updates the chosenPiece variable depending on the players answer.
-    chosenPiece = prompt("What piece do you want to move?");
-
-    //Depending on whhat players turn it is the program goes to different functions.
-    if(isWhiteTurn)
-    {
-        chosenPiece = chosenPiece.toLowerCase();
-    }
-    else
-    {
-        chosenPiece = chosenPiece.toUpperCase();
-    } 
-
-    pieceVar = chosenPiece;
-    chosenArray = legalMoves;
-    
-    MovementManager(); 
+    StartGame();
 }
 
 //Controls the white players turn.
@@ -252,7 +268,7 @@ function MovementManager()
     {
         /*var infoText = getElementById("info");
         infotext.innerHTML = "That is not a valid piece!";*/
-        alert("That is not a valid piece!");
+        infoText2.innerHTML = "That is not a valid piece!";
         PieceChooser();
     }
 
@@ -260,7 +276,7 @@ function MovementManager()
     {
         /*var infoText = getElementById("info");
         infotext.innerHTML = "That is not a valid piece!";*/
-        alert("You can not move that piece this turn!");
+        infoText2.innerHTML = "You can not move that piece this turn!";
         PieceChooser();
     }
 }
