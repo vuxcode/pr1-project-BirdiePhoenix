@@ -99,7 +99,32 @@ For example:
     - Added 1 more infotext in preparations to replace the prompts with textboxes
     - Changed so the player turns now shows in HTML in the info text at the top instead of showing up as prompts  
     
-   - 2025-04-12 11.30
+   - 2025-04-12 11.30 Worked for 0.5 hour
      - Added a textbox
      - Made it possible to change the second infotext
-     - Changed the prompt that asked for what piece to innerHTML 
+     - Changed the prompt that asked for what piece to innerHTML
+    
+   - 2025-04-13 22.00 Worked for 1.5 hours
+     - Added 1 button and changed 1 button
+       - Added a button to confirm the choice of square
+       - Changed the turnButton to pieceButton wich confirms the choice of piece
+     - 3 functions
+       - StartGame:
+         - Hides the startButton and the squareButton and shows the pieceButton and the textbox and then goes to TurnOrder
+       - BetweenPieceAndSquare:
+         - Hides the pieceButton and shows the squareButton. infoText2 is changed to ask what square the piece should be moved to.
+       - SquareChooser:
+         - Defines the chosenSquare variable and makes it upperCase.
+         - Moved the legalMoves loop here from EndTurn.
+         - Removed the while-loop and kept the if-statement. If legalMoves include the chosen square the EndFunction is also being runned
+         - but if not we'll go back to the BetweenPiecAndSquare function.
+     - Changed the TurnOrder function
+       - It now only defines the enemyPieces and friendlyPieces variables and changes the top text to wich players turn it is and the bottom text
+       - to ask what piece the player wants to move. To continue to the PieceChooser function the player needs to press the confirmPiece button
+     - Changed the PieceChooser function
+       - It now defines the chosenPiece variable
+       - changes the chosenPiece variable to upper- or lowercase
+       - runs the MovementManager and then the BetweenPieceAndSquare functions
+     - Changed the EndTurn function:
+       - Removed everything except from UpgradePiece(); to PrintBoard();
+       - Added so the StartGame-function is being runned in the end
