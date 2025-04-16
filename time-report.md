@@ -129,7 +129,7 @@ For example:
        - Removed everything except from UpgradePiece(); to PrintBoard();
        - Added so the StartGame-function is being runned in the end
       
-   - 2025-04-16 16.00
+   - 2025-04-16 16.00 Worked for 1 hour
      - To make things easier for me I created new functions and variables to be able to check for check
        - I might change this back to the original idea to get shorter amount of code
      - 7 function
