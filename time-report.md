@@ -128,3 +128,19 @@ For example:
      - Changed the EndTurn function:
        - Removed everything except from UpgradePiece(); to PrintBoard();
        - Added so the StartGame-function is being runned in the end
+      
+   - 2025-04-16 16.00
+     - To make things easier for me I created new functions and variables to be able to check for check
+       - I might change this back to the original idea to get shorter amount of code
+     - 7 function
+       - Copied the MovementManager and all the movement functions and changed their names
+       - MovmentManager -> CheckManager
+       - "Piece"Movement -> "Piece"Checker
+     - 2 variables
+       - kingslayer: replaced the chosenPiece variable in the new functions
+       - checkSquares: an array that replaced the legalMoves variable in the new function. This stores all the enemie moves
+     - Changed all the friendlyPieces variables to the enemyPieces variable and the other way around in the new movement functions
+     - Shortened the PawnChecker
+       - Removed the code for checking if the pawn could move forward, since it only can attack diagonally
+       - Switched places on the code in the if(isWhiteTurn)
+    
