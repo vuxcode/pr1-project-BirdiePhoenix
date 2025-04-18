@@ -2,13 +2,14 @@
 
 <style> * {font-family: monospace;}</style>
 <h1>CHESS</h1>
-<h3 id="info1">Welcome to Chess. White is lowercase and black is uppercase. <br></h3>
+<h2 id="info1">Welcome to Chess. White is lowercase and black is uppercase. <br></h2>
 <h3 id="squareNames"><br></h3>
 <h3 id="info2">Press to start the game</h3>
 <input id="output" type="text"> <br>
 <button id="startButton">Start Game</button>
 <button id="pieceButton">Confirm Piece</button>
 <button id="squareButton">Confirm Square</button>
+<button id="upgradeButton">Confirm Choice</button>
 
 <script>
 //Stores the opening board. Capital letter stands for black and lowercase stands for white. X is an empty square.
@@ -42,6 +43,8 @@ var unmovedPawns = ["p1", "p2", "p3", "p4", "p5","p6", "p7", "p8", "P1", "P2", "
 var whitePieces = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "r1", "r2", "b1", "b2", "n1", "n2", "qu", "ki"];
 var blackPieces = ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "R1", "R2", "B1", "B2", "N1", "N2", "QU", "KI"];
 
+var upgradePieces = ["r", "b", "n", "qu", "ki","R", "B", "N", "QU", "KI"];
+
 //Makes it possible for the program to check if the players wants to make an illegal move.
 var legalMoves = [];
 //An array to add squares where the king would be in check
@@ -61,6 +64,10 @@ pieceButton.style.display = "none";
 var squareButton = document.getElementById("squareButton");
 squareButton.addEventListener("click", SquareChooser);
 squareButton.style.display = "none";
+//This button confirms the upgrade choice
+var upgradeButton = document.getElementById("upgradeButton");
+upgradeButton.addEventListener("click", UpgradePiece);
+upgradeButton.style.display = "none";
 
 //Gives information about what players turn it is and what color is upper- and lowercase
 var infoText1 = document.getElementById("info1");
@@ -85,6 +92,7 @@ var upgradeTo;
 
 //Checks which players turn it is.
 var isWhiteTurn = true; 
+var isCheck = false;
 
 PrintBoard();
 
@@ -112,6 +120,7 @@ function StartGame()
 {
     startButton.style.display = "none";
     squareButton.style.display = "none";
+    upgradeButton.style.display = "none";
     pieceButton.style.display = "block";
     output.style.display = "block";
 
@@ -140,13 +149,19 @@ function TurnOrder()
     else
     {
         infoText1.innerHTML = "Black turn";
-    }
+    } 
 
+    PieceInput();
+}
+
+function PieceInput()
+{
     //Updates the chosenPiece variable depending on the players answer.
-    //chosenPiece = prompt("What piece do you want to move?");
     infoText2.innerHTML = "What piece do you want to move?";
     console.log(legalMoves);
 }
+
+
 
 function PieceChooser()
 {
@@ -162,12 +177,35 @@ function PieceChooser()
     } 
     
 
-    MovementManager();
+    if(isCheck)
+    {
+
+    }
+    else
+    {
+        MovementManager();
+    }
     console.log(legalMoves);
-    BetweenPieceAndSquare();
 }
 
-function BetweenPieceAndSquare()
+function InvalidPiece()
+{
+    infoText2.innerHTML = "That is not a valid piece!";
+}
+
+function NoLegalMoves()
+{
+    if(legalMoves.length == 0)
+    {
+        infoText2.innerHTML = "You can not move that piece this turn!";  
+    }
+    else
+    {
+        SquareInput();
+    } 
+}
+
+function SquareInput()
 {
     pieceButton.style.display = "none";
     squareButton.style.display = "block";
@@ -188,19 +226,23 @@ function SquareChooser()
         squareIndex = squareNames.indexOf(chosenSquare);
         chessBoard[pieceIndex] = "[]";
         chessBoard[squareIndex] = chosenPiece;
-        EndTurn();
+        PrintBoard();
+        CheckForUpgrade();
     }
     else
-    {
-        infoText2.innerHTML = "That is not a valid move";
-        BetweenPieceAndSquare();
+    { 
+        InvalidSquare();
     }
+}
+
+function InvalidSquare()
+{
+    infoText2.innerHTML = "That is not a valid move";
 }
 
 function EndTurn()
 {
-    //The UpgradePiece function checks if the piece should be upgraded
-    UpgradePiece();
+    //The CheckForUpgrade function checks if the piece should be upgraded
 
     //Checks if the moved pawn is in the unmovedPawns array and if it is it gets removed
     if(unmovedPawns.includes(chosenPiece))
@@ -230,48 +272,93 @@ function EndTurn()
     StartGame();
 }
 
-//Controls the white players turn.
+//CHANGE THIS WHEN IMPLEMENTING POWERUPS
+//This function upgrades the pawns into a queen when reaching the end of the board
+function CheckForUpgrade()
+{
+    //Checks if the chosenPiece includes p or P
+    if(chosenPiece.includes("p") || chosenPiece.includes("P"))
+    {
+        //Checks if the pawn has reached the top row (index <= 7) or the bottom row (index >= 56)
+        if(chessBoard.indexOf(chosenPiece) <= 7 || chessBoard.indexOf(chosenPiece) >= 56)
+        {
+            upgradeButton.style.display = "block"; 
+            squareButton.style.display = "none";
+            infoText2.innerHTML = "What piece do you want to upgrade the pawn to?";
+        }
+        else
+        {
+            EndTurn();
+        }       
+    }
+    else
+    {
+        EndTurn();
+    }
+}
+
+function UpgradePiece()
+{
+    upgradeTo = output.value;
+
+    if(!upgradePieces.includes(upgradeTo))
+    {
+        InvalidPiece();
+    }
+    else
+    {
+        //Checks if it is a white or a black piece
+        if(chosenPiece.includes("p"))
+        {
+            upgradeTo = upgradeTo.toLowerCase();
+            chessBoard[chessBoard.indexOf(chosenPiece)] = upgradeTo;   
+        } 
+        else if(chosenPiece.includes("P"))
+        {
+            upgradeTo = upgradeTo.toUpperCase();
+            chessBoard[chessBoard.indexOf(chosenPiece)] = upgradeTo;
+        } 
+        EndTurn();
+    }
+}
+
+//MOVEMENT FUNCTIONS
 //Depending on the players answer the program will go to the right function
 function MovementManager()
 {
     if(chosenPiece.includes("p") || chosenPiece.includes("P") )
     {
-        PawnMovement();
+        PawnMovement(); 
+        NoLegalMoves();       
     }
     else if(chosenPiece.includes("r") || chosenPiece.includes("R"))
     {
         RookMovement();
+        NoLegalMoves();
     }
     else if(chosenPiece.includes("n") || chosenPiece.includes("N"))
     {
         KnightMovement();
+        NoLegalMoves();
     }
     else if(chosenPiece.includes("b") || chosenPiece.includes("B"))
     {
         BishopMovement();
+        NoLegalMoves();
     }
     else if(chosenPiece.includes("k")|| chosenPiece.includes("K"))
     {
         KingMovement();
+        NoLegalMoves();
     }
     else if(chosenPiece.includes("q") || chosenPiece.includes("Q"))
     {
         QueenMovement();
+        NoLegalMoves();
     }
     else
     {
-        /*var infoText = getElementById("info");
-        infotext.innerHTML = "That is not a valid piece!";*/
-        infoText2.innerHTML = "That is not a valid piece!";
-        PieceChooser();
-    }
-
-    if(legalMoves.length == 0)
-    {
-        /*var infoText = getElementById("info");
-        infotext.innerHTML = "That is not a valid piece!";*/
-        infoText2.innerHTML = "You can not move that piece this turn!";
-        PieceChooser();
+        InvalidPiece();
     }
 }
 
@@ -649,33 +736,7 @@ function KingMovement()
     }
 }
 
-//CHANGE THIS WHEN IMPLEMENTING POWERUPS
-//This function upgrades the pawns into a queen when reaching the end of the board
-function UpgradePiece()
-{
-    //Checks if the chosenPiece includes p or P
-    if(chosenPiece.includes("p") || chosenPiece.includes("P"))
-    {
-        //Checks if the pawn has reached the top row (index <= 7) or the bottom row (index >= 56)
-        if(chessBoard.indexOf(chosenPiece) <= 7 || chessBoard.indexOf(chosenPiece) >= 56)
-        {
-            //Checks if it is a white or a black piece
-            if(chosenPiece.includes("p"))
-            {
-                upgradeTo = prompt("What piece do you want to upgrade the pawn to?");
-                upgradeTo = upgradeTo.toLowerCase();
-                chessBoard[chessBoard.indexOf(kingSlayer)] = upgradeTo;   
-            } 
-            else if(chosenPiece.includes("P"))
-            {
-                upgradeTo = prompt("What piece do you want to upgrade the pawn to?");
-                upgradeTo = upgradeTo.toUpperCase();
-                chessBoard[chessBoard.indexOf(chosenPiece)] = upgradeTo;
-            }
-        }
-    }
-}
-
+//CHECK FUNCTIONS
 function CheckChecker()
 {
     checkSquares.splice(0);
