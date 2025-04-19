@@ -143,4 +143,34 @@ For example:
      - Shortened the PawnChecker
        - Removed the code for checking if the pawn could move forward, since it only can attack diagonally
        - Switched places on the code in the if(isWhiteTurn)
+      
+     - 2025-04-18 11.00 Worked for 1 hour
+       - Changed the size of info1
+         - For better visibility of what players turn it is
+       - 1 button
+         - upgradeButton: to confirm the choice of what piece to upgrade the pawns to
+           - Pressing this goes to the UpgradePiece-function
+       - 1 array
+         - upgradePieces
+           - Stores the pieces that the pawns can upgrade to
+       - 6 functions
+         - PieceInput
+           - Updates infoText2 to ask the player what piece they wants to move
+         - InvalidPiece
+           - Updates infoText2 to tell the player that it is a invalid piece they have chosen
+           - This function is being called if the player choses a piece that doesnt exist
+         - NoLegalMoves
+           - This function checks if the chosen piece can be moved
+           - If not: infoText2 is being updated to tell this to the player
+           - If the piece can be moved: the SquareInput-function is being called
+         - SquareInput
+           - Updates infoText2 to ask the player wich square they want to move the chosen piece
+           - and hides the pieceButton and makes the squareButton visible
+         - InvalidSquare
+           - Updates infoText2 to inform the player they have chosen a square that the chosen piece cannot move to
+         - CheckForUpgrade
+           - Checks if a pawn has reached the end of the board
+           - If it has: calls the UpgradePiece-finction
+           - Else: calls the EndTurn-function
+         - (these functions doesn't contain any new code, they where only created to make the buttons work and so infoText2 updates correctly)
     
