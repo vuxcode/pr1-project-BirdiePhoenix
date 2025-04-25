@@ -21,4 +21,6 @@
 11. Problem: Runned into some bugs when adding the textbox
     Solution: I hade to create some new functions and rearrange what some of the function does so it could work with the textbox and the buttons
 12. Problem: When you don't write anything when pressing "Confirm Piece" there is following error: Maximum Call stack size exceeded.
-    Solution: I havn't done anything to solve this yet since it doesn't break the program 
+    Solution: I havn't done anything to solve this yet since it doesn't break the program
+13. Problem: a lot of bugs appeard when implementing the check functions.
+    Solution The checkStorage didnt update properly so error occured
