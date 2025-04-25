@@ -173,4 +173,14 @@ For example:
            - If it has: calls the UpgradePiece-finction
            - Else: calls the EndTurn-function
          - (these functions doesn't contain any new code, they where only created to make the buttons work and so infoText2 updates correctly)
+        
+     - 2025-04-23,24,25  Worked for 6 hours (was so focused on fixing the check mechanics so I forgot updating this every day)
+       - 1 array
+         - checkStorage
+           - Stores the same information as the chessBoard-array
+           - Is used when checking if moving a friendly piece would make the king check and updates when checking for every possible move
+       - 1 variable
+         - possibleEnemyMoves
+           - in the check functions I changed possibleMoves to possibleEnemyMoves to seperate the to variables
+       - Added code in all the movement functions so the program checks if moving a piece in a certain way would make the king check
     
