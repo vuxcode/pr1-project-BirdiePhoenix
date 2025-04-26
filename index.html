@@ -104,6 +104,8 @@ var upgradeTo;
 //Checks which players turn it is.
 var isWhiteTurn = true; 
 var isCheck = false;
+var isMate = false;
+var checkingForMate = false;
 
 PrintBoard();
 
@@ -152,15 +154,48 @@ function TurnOrder()
         friendlyPieces = blackPieces;
     }
 
-    //Notifies wich players turn it is.
-    if(isWhiteTurn)
+    EnemyCheckChecker();
+
+    if(isCheck)
     {
-        infoText1.innerHTML = "White turn."; 
+        if(isWhiteTurn)
+        {
+            MateChecker();
+            if(isMate)
+            {
+                infoText1.innerHTML = "Checkmate! Black wins!";   
+            }
+            else
+            {
+
+                infoText1.innerHTML = "White turn - Check!"; 
+            }
+        }
+        else
+        {
+            MateChecker();
+            if(isMate)
+            {
+                infoText1.innerHTML = "Checkmate! White wins!";   
+            }
+            else
+            {
+                infoText1.innerHTML = "Black turn - Check!"; 
+            }
+        }    
     }
     else
     {
-        infoText1.innerHTML = "Black turn";
-    } 
+        //Notifies wich players turn it is.
+        if(isWhiteTurn)
+        {
+            infoText1.innerHTML = "White turn"; 
+        }
+        else
+        {
+            infoText1.innerHTML = "Black turn";
+        }  
+    }
 
     PieceInput();
 }
@@ -190,13 +225,12 @@ function PieceChooser()
 
     if(isCheck)
     {
-
+        console.log("Check!");
     }
     else
     {
-        
+        MovementManager();  
     }
-    MovementManager();
     console.log(legalMoves);
 }
 
@@ -343,32 +377,50 @@ function MovementManager()
     if(chosenPiece.includes("p") || chosenPiece.includes("P") )
     {
         PawnMovement(); 
-        NoLegalMoves();       
+        if(!checkingForMate)
+        {
+            NoLegalMoves();       
+        }
     }
     else if(chosenPiece.includes("r") || chosenPiece.includes("R"))
     {
         RookMovement();
-        NoLegalMoves();
+        if(!checkingForMate)
+        {
+            NoLegalMoves();       
+        }
     }
     else if(chosenPiece.includes("n") || chosenPiece.includes("N"))
     {
         KnightMovement();
-        NoLegalMoves();
+        if(!checkingForMate)
+        {
+            NoLegalMoves();       
+        }
     }
     else if(chosenPiece.includes("b") || chosenPiece.includes("B"))
     {
         BishopMovement();
-        NoLegalMoves();
+        if(!checkingForMate)
+        {
+            NoLegalMoves();       
+        }
     }
     else if(chosenPiece.includes("k")|| chosenPiece.includes("K"))
     {
         KingMovement();
-        NoLegalMoves();
+        if(!checkingForMate)
+        {
+            NoLegalMoves();       
+        }
     }
     else if(chosenPiece.includes("q") || chosenPiece.includes("Q"))
     {
         QueenMovement();
-        NoLegalMoves();
+        if(!checkingForMate)
+        {
+            NoLegalMoves();       
+        }
     }
     else
     {
@@ -1249,6 +1301,24 @@ function KingMovement()
 }
 
 //CHECK FUNCTIONS
+function MateChecker()
+{
+    checkingForMate = true;
+    for(i = 0; i < friendlyPieces.length; i++)
+    {
+        chosenPiece = friendlyPieces[i];
+        MovementManager();
+    }
+    checkingForMate = false;
+
+    if(legalMoves.length == 0)
+    {
+        isMate = true;
+    }
+    //Resets the legalMoves properties.
+    legalMoves.splice(0); 
+}
+
 function EnemyCheckChecker()
 {
     checkSquares.splice(0);
@@ -1263,7 +1333,7 @@ function EnemyCheckChecker()
 
     //Checks if checkSquares includes a square with the friendly king
     //If it does it clears the legal moves
-    if(checkSquares.includes(squareNames[chessBoard.indexOf("ki")]) || checkSquares.includes(squareNames[chessBoard.indexOf("KI")]))
+    if(checkSquares.includes(squareNames[checkStorage.indexOf("ki")]) || checkSquares.includes(squareNames[checkStorage.indexOf("KI")]))
     {
         isCheck = true;
         console.log("Check!"); 
