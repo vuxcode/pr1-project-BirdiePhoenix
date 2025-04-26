@@ -183,4 +183,18 @@ For example:
          - possibleEnemyMoves
            - in the check functions I changed possibleMoves to possibleEnemyMoves to seperate the to variables
        - Added code in all the movement functions so the program checks if moving a piece in a certain way would make the king check
+      
+     - 2025-04-26 Worked for 1 hour
+       - 2 variables
+         - isMate
+           - Checks if a player is mate and hav lost the game
+         - checkingForMate
+           - Is used when checking for mate in the MateChecker-function
+           - If chekingForMate = true, the NoLegalMoves function isn't runned
+       - 1 function
+         - MateChecker
+           - Is similar to the EnemyCheckChecker but instead of checking if an enemy would make the king check
+           - it checks if a friendly piece could be moved to prevent checkmate
+       - Bugfix
+         - Fixed a bug with the king
     
