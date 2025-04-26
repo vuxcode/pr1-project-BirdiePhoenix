@@ -24,3 +24,5 @@
     Solution: I havn't done anything to solve this yet since it doesn't break the program
 13. Problem: a lot of bugs appeard when implementing the check functions.
     Solution The checkStorage didnt update properly so error occured
+14. Problem: The king could move to a square where it would be in check
+    Solution: Inside EnemyCheckChecker, replaced chessBoard with checkStorage in the condition for the if-statement
