@@ -1,0 +1,1636 @@
+<meta name="color-scheme" content="dark">
+
+<style> * {font-family: monospace;}</style>
+<h1>CHESS</h1>
+<h2 id="info1">Welcome to Chess. White is lowercase and black is uppercase. <br></h2>
+<h3 id="squareNames"><br></h3>
+<h3 id="info2">Press to start the game</h3>
+<input id="output" type="text"> <br>
+<button id="startButton">Start Game</button>
+<button id="pieceButton">Confirm Piece</button>
+<button id="squareButton">Confirm Square</button>
+<button id="upgradeButton">Confirm Choice</button>
+
+<script>
+//Stores the opening board. Capital letter stands for black and lowercase stands for white. X is an empty square.
+var chessBoard = [
+    "R1", "N1", "B1", "QU", "KI", "B2", "N2", "R2",
+    "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8",
+    "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
+    "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
+    "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
+    "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
+    "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8",
+    "r1", "n1", "b1", "qu", "ki", "b2", "n2", "r2"
+]; 
+
+//Stores the name of the squares.
+var squareNames = [
+    "A8", "B8" ,"C8", "D8", "E8", "F8", "G8", "H8",
+    "A7", "B7" ,"C7", "D7", "E7", "F7", "G7", "H7",
+    "A6", "B6" ,"C6", "D6", "E6", "F6", "G6", "H6",
+    "A5", "B5" ,"C5", "D5", "E5", "F5", "G5", "H5",
+    "A4", "B4" ,"C4", "D4", "E4", "F4", "G4", "H4",
+    "A3", "B3" ,"C3", "D3", "E3", "F3", "G3", "H3",
+    "A2", "B2" ,"C2", "D2", "E2", "F2", "G2", "H2",
+    "A1", "B1" ,"C1", "D1", "E1", "F1", "G1", "H1"
+]; 
+
+var checkStorage = [
+    "R1", "N1", "B1", "QU", "KI", "B2", "N2", "R2",
+    "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8",
+    "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
+    "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
+    "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
+    "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
+    "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8",
+    "r1", "n1", "b1", "qu", "ki", "b2", "n2", "r2"
+];
+
+
+//Stores all unmoved pawns, so the program nows wich ones that can move 2 squares.
+var unmovedPawns = ["p1", "p2", "p3", "p4", "p5","p6", "p7", "p8", "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"];
+
+var whitePieces = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "r1", "r2", "b1", "b2", "n1", "n2", "qu", "ki"];
+var blackPieces = ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "R1", "R2", "B1", "B2", "N1", "N2", "QU", "KI"];
+
+var upgradePieces = ["r", "b", "n", "qu", "ki","R", "B", "N", "QU", "KI"];
+
+//Makes it possible for the program to check if the players wants to make an illegal move.
+var legalMoves = [];
+//An array to add squares where the king would be in check
+var checkSquares = [];
+
+//Stores the name of the pieces for future use. This will be used to restrict the movement of the pieces.
+var pieces = ["Pawn", "Rook", "Knight", "Bishop", "Queen", "King"];
+
+//This button starts the game
+var startButton = document.getElementById("startButton");
+startButton.addEventListener("click", StartGame)
+//This button confirms the piece choice.
+var pieceButton = document.getElementById("pieceButton");
+pieceButton.addEventListener("click", PieceChooser); 
+pieceButton.style.display = "none";
+//This button confirms the square choice.
+var squareButton = document.getElementById("squareButton");
+squareButton.addEventListener("click", SquareChooser);
+squareButton.style.display = "none";
+//This button confirms the upgrade choice
+var upgradeButton = document.getElementById("upgradeButton");
+upgradeButton.addEventListener("click", UpgradePiece);
+upgradeButton.style.display = "none";
+
+//Gives information about what players turn it is and what color is upper- and lowercase
+var infoText1 = document.getElementById("info1");
+//Gives information about what the players should write in the text box and if the player writes an invalid input
+var infoText2 = document.getElementById("info2");
+
+//A textbox where the players can write what piece they want to move and where they want to move it
+var output = document.getElementById("output");
+output.style.display = "none";
+
+//Variables for the choosen piece and square to move to.
+var chosenPiece;
+var chosenSquare;
+var pieceIndex;
+var squareIndex;
+var enemyPieces;
+var friendlyPieces;
+var kingSlayer;
+
+
+var upgradeTo;
+
+//Checks which players turn it is.
+var isWhiteTurn = true; 
+var isCheck = false;
+
+PrintBoard();
+
+//This function is what prints the board.
+function PrintBoard()
+{
+    var updateBoard = document.getElementById("squareNames");
+    updateBoard.innerHTML = " ";   
+    for(var i = 0; i < chessBoard.length; i++)
+    { 
+        if((i + 1) % 8 == 0)
+        {
+            var updateBoard = document.getElementById("squareNames");
+            updateBoard.innerHTML += chessBoard[i] + " " + "<br>";
+        }
+        else
+        {
+            var updateBoard = document.getElementById("squareNames");
+            updateBoard.innerHTML += chessBoard[i] + " ";
+        }
+    }
+}
+
+function StartGame()
+{
+    startButton.style.display = "none";
+    squareButton.style.display = "none";
+    upgradeButton.style.display = "none";
+    pieceButton.style.display = "block";
+    output.style.display = "block";
+
+    TurnOrder();
+}
+
+//This function controlls the actual turns.
+function TurnOrder()
+{
+    if(isWhiteTurn)
+    {
+        enemyPieces = blackPieces;
+        friendlyPieces = whitePieces;
+    }
+    else
+    {
+        enemyPieces = whitePieces;
+        friendlyPieces = blackPieces;
+    }
+
+    //Notifies wich players turn it is.
+    if(isWhiteTurn)
+    {
+        infoText1.innerHTML = "White turn."; 
+    }
+    else
+    {
+        infoText1.innerHTML = "Black turn";
+    } 
+
+    PieceInput();
+}
+
+function PieceInput()
+{
+    //Updates the chosenPiece variable depending on the players answer.
+    infoText2.innerHTML = "What piece do you want to move?";
+    console.log(legalMoves);
+}
+
+
+
+function PieceChooser()
+{
+    chosenPiece = output.value;
+    //Depending on whhat players turn it is the program goes to different functions.
+    if(isWhiteTurn)
+    {
+        chosenPiece = chosenPiece.toLowerCase();
+    }
+    else
+    {
+        chosenPiece = chosenPiece.toUpperCase();
+    } 
+    
+
+    if(isCheck)
+    {
+
+    }
+    else
+    {
+        
+    }
+    MovementManager();
+    console.log(legalMoves);
+}
+
+function InvalidPiece()
+{
+    infoText2.innerHTML = "That is not a valid piece!";
+}
+
+function NoLegalMoves()
+{
+    if(legalMoves.length == 0)
+    {
+        infoText2.innerHTML = "You can not move that piece this turn!";  
+    }
+    else
+    {
+        SquareInput();
+    } 
+}
+
+function SquareInput()
+{
+    pieceButton.style.display = "none";
+    squareButton.style.display = "block";
+    infoText2.innerHTML = "Where do you want to move the piece?";
+    console.log(chessBoard);
+    console.log(checkStorage);
+}
+
+function SquareChooser()
+{
+    //Updates the chosenSquare variable depending on the players answer.
+    chosenSquare = output.value;
+    chosenSquare = chosenSquare.toUpperCase();
+
+    //If the move is legal the board will update.
+    if(legalMoves.includes(chosenSquare))
+    {
+        //Gets the indexes of the chosen piece and square so we can change those places in the chessBoard array. 
+        pieceIndex = chessBoard.indexOf(chosenPiece);
+        squareIndex = squareNames.indexOf(chosenSquare);
+        chessBoard[pieceIndex] = "[]";
+        chessBoard[squareIndex] = chosenPiece;
+        checkStorage[pieceIndex] = "[]";
+        checkStorage[squareIndex] = chosenPiece;
+        PrintBoard();
+        CheckForUpgrade();
+    }
+    else
+    { 
+        InvalidSquare();
+    }
+}
+
+function InvalidSquare()
+{
+    infoText2.innerHTML = "That is not a valid move";
+}
+
+function EndTurn()
+{
+    //The CheckForUpgrade function checks if the piece should be upgraded
+
+    //Checks if the moved pawn is in the unmovedPawns array and if it is it gets removed
+    if(unmovedPawns.includes(chosenPiece))
+    {
+        //Removes the chosen pawn from the unmovedPawns array.
+        unmovedPawns.splice(unmovedPawns.indexOf(chosenPiece), 1);
+    }
+
+    console.log(legalMoves);
+
+    //Resets the legalMoves properties.
+    legalMoves.splice(0); 
+
+    //Changes what players turn it is
+    if(isWhiteTurn)
+    {
+        isWhiteTurn = false;  
+    }
+    else
+    {
+        isWhiteTurn = true;
+    }
+
+    PrintBoard();
+    StartGame();
+}
+
+//CHANGE THIS WHEN IMPLEMENTING POWERUPS
+//This function upgrades the pawns into a queen when reaching the end of the board
+function CheckForUpgrade()
+{
+    //Checks if the chosenPiece includes p or P
+    if(chosenPiece.includes("p") || chosenPiece.includes("P"))
+    {
+        //Checks if the pawn has reached the top row (index <= 7) or the bottom row (index >= 56)
+        if(chessBoard.indexOf(chosenPiece) <= 7 || chessBoard.indexOf(chosenPiece) >= 56)
+        {
+            upgradeButton.style.display = "block"; 
+            squareButton.style.display = "none";
+            infoText2.innerHTML = "What piece do you want to upgrade the pawn to?";
+        }
+        else
+        {
+            EndTurn();
+        }       
+    }
+    else
+    {
+        EndTurn();
+    }
+}
+
+function UpgradePiece()
+{
+    upgradeTo = output.value;
+
+    if(!upgradePieces.includes(upgradeTo))
+    {
+        InvalidPiece();
+    }
+    else
+    {
+        //Checks if it is a white or a black piece
+        if(chosenPiece.includes("p"))
+        {
+            upgradeTo = upgradeTo.toLowerCase();
+            chessBoard[chessBoard.indexOf(chosenPiece)] = upgradeTo;   
+        } 
+        else if(chosenPiece.includes("P"))
+        {
+            upgradeTo = upgradeTo.toUpperCase();
+            chessBoard[chessBoard.indexOf(chosenPiece)] = upgradeTo;
+        } 
+        EndTurn();
+    }
+}
+
+//MOVEMENT FUNCTIONS
+//Depending on the players answer the program will go to the right function
+function MovementManager()
+{
+    if(chosenPiece.includes("p") || chosenPiece.includes("P") )
+    {
+        PawnMovement(); 
+        NoLegalMoves();       
+    }
+    else if(chosenPiece.includes("r") || chosenPiece.includes("R"))
+    {
+        RookMovement();
+        NoLegalMoves();
+    }
+    else if(chosenPiece.includes("n") || chosenPiece.includes("N"))
+    {
+        KnightMovement();
+        NoLegalMoves();
+    }
+    else if(chosenPiece.includes("b") || chosenPiece.includes("B"))
+    {
+        BishopMovement();
+        NoLegalMoves();
+    }
+    else if(chosenPiece.includes("k")|| chosenPiece.includes("K"))
+    {
+        KingMovement();
+        NoLegalMoves();
+    }
+    else if(chosenPiece.includes("q") || chosenPiece.includes("Q"))
+    {
+        QueenMovement();
+        NoLegalMoves();
+    }
+    else
+    {
+        InvalidPiece();
+    }
+}
+
+//ADD SO THE PAWN CAN MOVE DIAGONALY IF ADJACENT PAWN MOVED TWO SQUARES
+//Controls the pawn movement.
+//Depending on wich players turn it is there will be a different equation.
+function PawnMovement()
+{
+    var possibleMoves = chessBoard.indexOf(chosenPiece);
+    if(isWhiteTurn)
+    {
+        if(chessBoard[possibleMoves-8] == "[]")
+        {
+            checkStorage[possibleMoves] = "[]";
+            checkStorage[possibleMoves-8] = chosenPiece;
+            EnemyCheckChecker(); 
+            console.log(checkStorage);
+            if(!isCheck)
+            {
+                legalMoves.push(squareNames[possibleMoves-8]);
+            }
+            else
+            {
+                console.log("Check!");
+                isCheck = false;
+            }   
+            checkStorage[possibleMoves] = chosenPiece;
+            checkStorage[possibleMoves-8] = "[]";  
+        }
+        
+        if(unmovedPawns.includes(chosenPiece) && chessBoard[possibleMoves-16] == "[]" && chessBoard[possibleMoves-8] == "[]")
+        {
+            checkStorage[possibleMoves] = "[]";
+            checkStorage[possibleMoves-16] = chosenPiece;
+            EnemyCheckChecker(); 
+            console.log(checkStorage);
+            if(!isCheck)
+            {
+                legalMoves.push(squareNames[possibleMoves-16]);
+            }
+            else
+            {
+                console.log("Check!");
+                isCheck = false;
+            }
+            checkStorage[possibleMoves] = chosenPiece;
+            checkStorage[possibleMoves-16] = "[]";
+        }
+
+        //Checks if there is a black piece UP diagonaly to the RIGHT of the pawn
+        if(blackPieces.includes(chessBoard[possibleMoves-7]))
+        {
+            //If the chosen pawn isn't on the H-row, wich all +1 is devisble by 8, the square should be added to the legalMoves array 
+            if((possibleMoves + 1) % 8 != 0)
+            {
+                checkStorage[possibleMoves] = "[]";
+                checkStorage[possibleMoves-7] = chosenPiece;
+                EnemyCheckChecker(); 
+                console.log(checkStorage);
+                if(!isCheck)
+                {
+                    console.log("Not check!");
+                    legalMoves.push(squareNames[possibleMoves-7]);
+                }
+                else
+                {
+                    console.log("Check!");
+                    isCheck = false;
+                }
+                checkStorage[possibleMoves] = chosenPiece;
+                checkStorage[possibleMoves-7] = "[]";
+            }  
+        }
+        //Checks if there is a black piece UP diagonaly to the LEFT of the pawn
+        if(blackPieces.includes(chessBoard[possibleMoves-9]))
+        {
+            //If the chosen pawn isn't on the A-row, wich all is devisble by 8, the square should be added to the legalMoves array
+            if((possibleMoves) % 8 != 0)
+            {
+                checkStorage[possibleMoves] = "[]";
+                checkStorage[possibleMoves-9] = chosenPiece;
+                EnemyCheckChecker(); 
+                console.log(checkStorage);
+                if(!isCheck)
+                {
+                    console.log("Not check!");
+                    legalMoves.push(squareNames[possibleMoves-9]);
+                }
+                else
+                {
+                    console.log("Check!");
+                    isCheck = false;
+                }
+                checkStorage[possibleMoves] = chosenPiece;
+                checkStorage[possibleMoves-9] = "[]";
+            } 
+        }
+    }
+    else //Black
+    {
+        if(chessBoard[possibleMoves+8] == "[]")
+        {
+            checkStorage[possibleMoves] = "[]";
+            checkStorage[possibleMoves+8] = chosenPiece;
+            EnemyCheckChecker(); 
+            console.log(checkStorage);
+            if(!isCheck)
+            {
+                console.log("Not check!");
+                legalMoves.push(squareNames[possibleMoves+8]);
+            }
+            else
+            {
+                console.log("Check!");
+                isCheck = false;
+            }
+            checkStorage[possibleMoves] = chosenPiece;
+            checkStorage[possibleMoves+8] = "[]";
+        }
+
+        if(unmovedPawns.includes(chosenPiece) && chessBoard[possibleMoves+16] == "[]" && chessBoard[possibleMoves+8] == "[]")
+        {
+            checkStorage[possibleMoves] = "[]";
+            checkStorage[possibleMoves+16] = chosenPiece;
+            EnemyCheckChecker(); 
+            console.log(checkStorage);
+            if(!isCheck)
+            {
+                console.log("Not check!");
+                legalMoves.push(squareNames[possibleMoves+16]);
+            }
+            else
+            {
+                console.log("Check!");
+                isCheck = false;
+            }
+            checkStorage[possibleMoves] = chosenPiece;
+            checkStorage[possibleMoves+16] = "[]";
+        }
+
+        //Checks if there is a piece DOWN diagonaly to the LEFT of the pawn
+        if(whitePieces.includes(chessBoard[possibleMoves+7]))
+        {
+            //If the chosen pawn isn't on the A-row, wich all is devisble by 8, the square should be added to the legalMoves array 
+            if((possibleMoves) % 8 != 0)
+            {
+                checkStorage[possibleMoves] = "[]";
+                checkStorage[possibleMoves+7] = chosenPiece;
+                EnemyCheckChecker(); 
+                console.log(checkStorage);
+                if(!isCheck)
+                {
+                    console.log("Not check!");
+                    legalMoves.push(squareNames[possibleMoves+7]);
+                }
+                else
+                {
+                    console.log("Check!");
+                    isCheck = false;
+                }
+                checkStorage[possibleMoves] = chosenPiece;
+                checkStorage[possibleMoves+7] = "[]";
+            }  
+        }
+        //Checks if there is a piece DOWN diagonaly to the RIGHT of the pawn
+        if(whitePieces.includes(chessBoard[possibleMoves+9]))
+        {
+            //If the chosen pawn isn't on the A-row, wich all is devisble by 8, the square should be added to the legalMoves array
+            if((possibleMoves+1) % 8 != 0)
+            {
+                checkStorage[possibleMoves] = "[]";
+                checkStorage[possibleMoves+9] = chosenPiece;
+                EnemyCheckChecker(); 
+                console.log(checkStorage);
+                if(!isCheck)
+                {
+                    console.log("Not check!");
+                    legalMoves.push(squareNames[possibleMoves+9]);
+                }
+                else
+                {
+                    console.log("Check!");
+                    isCheck = false;
+                }
+                checkStorage[possibleMoves] = chosenPiece;
+                checkStorage[possibleMoves+9] = "[]";
+            } 
+        }
+    }
+}
+
+function RookMovement()
+{    
+    var possibleMoves = chessBoard.indexOf(chosenPiece);    
+    //Checks if the ROOK can move to the RIGHT
+    if((possibleMoves + 1) % 8 != 0 && !friendlyPieces.includes(chessBoard[possibleMoves+1]))
+    { 
+        checkStorage[possibleMoves] = "[]";
+        checkStorage[possibleMoves+1] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            while((possibleMoves + 1) % 8 != 0 && !friendlyPieces.includes(chessBoard[possibleMoves+1]))
+            {
+                if(enemyPieces.includes(chessBoard[possibleMoves+1]))
+                {
+                    possibleMoves++;
+                    legalMoves.push(squareNames[possibleMoves]);
+                    break;
+                }
+                possibleMoves++;
+                legalMoves.push(squareNames[possibleMoves]);
+            }
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        possibleMoves = chessBoard.indexOf(chosenPiece);
+        checkStorage[possibleMoves] = chosenPiece;
+        checkStorage[possibleMoves+1] = "[]";                                                                                       
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the ROOK can move to the LEFT
+    if(possibleMoves % 8 != 0 && possibleMoves != 0 && !friendlyPieces.includes(chessBoard[possibleMoves-1]))
+    {
+        checkStorage[possibleMoves] = "[]";
+        checkStorage[possibleMoves-1] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            while(possibleMoves % 8 != 0 && possibleMoves != 0 && !friendlyPieces.includes(chessBoard[possibleMoves-1]))
+            {
+                if(enemyPieces.includes(chessBoard[possibleMoves-1]))
+                {
+                    possibleMoves--;
+                    legalMoves.push(squareNames[possibleMoves]);
+                    break;
+                }
+                possibleMoves--;
+                console.log("possibleMoves is: " + possibleMoves);
+                legalMoves.push(squareNames[possibleMoves]);
+            }
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        possibleMoves = chessBoard.indexOf(chosenPiece);
+        checkStorage[possibleMoves] = chosenPiece;
+        checkStorage[possibleMoves-1] = "[]";
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the ROOK can move DOWN. If it is >= 56 it is on the bottom line.
+    if((chessBoard.indexOf(chosenPiece) < 56) && !friendlyPieces.includes(chessBoard[possibleMoves+8]))
+    {
+        checkStorage[possibleMoves] = "[]";
+        checkStorage[possibleMoves+8] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            while(possibleMoves+8 <= 63 && !friendlyPieces.includes(chessBoard[possibleMoves+8]))
+            {
+                if(enemyPieces.includes(chessBoard[possibleMoves+8]))
+                {
+                    possibleMoves+=8;
+                    legalMoves.push(squareNames[possibleMoves]);
+                    break;
+                }
+                possibleMoves+=8;
+                legalMoves.push(squareNames[possibleMoves]);
+            }
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        possibleMoves = chessBoard.indexOf(chosenPiece);
+        checkStorage[possibleMoves] = chosenPiece;
+        checkStorage[possibleMoves+8] = "[]";
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the ROOK can move UP. If it is <= 7 it is on the bottom line.
+    if(chessBoard.indexOf(chosenPiece) > 7 && !friendlyPieces.includes(chessBoard[possibleMoves-8]))
+    {
+        checkStorage[possibleMoves] = "[]";
+        checkStorage[possibleMoves-8] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            while(possibleMoves-8 >= 0 && !friendlyPieces.includes(chessBoard[possibleMoves-8]))
+            {
+                if(enemyPieces.includes(chessBoard[possibleMoves-8]))
+                {
+                    possibleMoves-=8;
+                    legalMoves.push(squareNames[possibleMoves]);
+                    break;
+                }
+                possibleMoves-=8;
+                legalMoves.push(squareNames[possibleMoves]);
+            }
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        possibleMoves = chessBoard.indexOf(chosenPiece);
+        checkStorage[possibleMoves] = chosenPiece;
+        checkStorage[possibleMoves-8] = "[]"; 
+    } 
+}
+
+function KnightMovement()
+{
+    var possibleMoves = chessBoard.indexOf(chosenPiece);  
+    
+    //Checks if the KNIGHT can move 1 RIGHT and 2 UP
+    if((possibleMoves+1) % 8 != 0 && chessBoard.indexOf(chosenPiece) > 15 && !friendlyPieces.includes(chessBoard[possibleMoves-15]))
+    {
+        possibleMoves-=15;
+    
+        checkStorage[possibleMoves+15] = "[]";
+        checkStorage[possibleMoves] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            legalMoves.push(squareNames[possibleMoves]);
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        checkStorage[possibleMoves+15] = chosenPiece;
+        checkStorage[possibleMoves] = "[]";
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the KNIGHT can move 2 RIGHT and 1 UP
+    if((possibleMoves+1) % 8 != 0 && (possibleMoves+2) % 8 != 0 && chessBoard.indexOf(chosenPiece) > 7 && !friendlyPieces.includes(chessBoard[possibleMoves-6]))
+    {
+        possibleMoves-=6;
+        
+        checkStorage[possibleMoves+6] = "[]";
+        checkStorage[possibleMoves] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            legalMoves.push(squareNames[possibleMoves]);
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        checkStorage[possibleMoves+6] = chosenPiece;
+        checkStorage[possibleMoves] = "[]";
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the KNIGHT can move 1 LEFT and 2 UP
+    if(possibleMoves % 8 != 0 && chessBoard.indexOf(chosenPiece) > 15 && !friendlyPieces.includes(chessBoard[possibleMoves-17]))
+    {
+        possibleMoves-=17;
+        
+        checkStorage[possibleMoves+17] = "[]";
+        checkStorage[possibleMoves] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            legalMoves.push(squareNames[possibleMoves]);
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        checkStorage[possibleMoves+17] = chosenPiece;
+        checkStorage[possibleMoves] = "[]";
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the KNIGHT can move 2 LEFT and 1 UP
+    if(possibleMoves % 8 != 0 && (possibleMoves-1) % 8 != 0 && chessBoard.indexOf(chosenPiece) > 7 && !friendlyPieces.includes(chessBoard[possibleMoves-10]))
+    {
+        possibleMoves-=10;
+        
+        checkStorage[possibleMoves+10] = "[]";
+        checkStorage[possibleMoves] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            legalMoves.push(squareNames[possibleMoves]);
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        checkStorage[possibleMoves+10] = chosenPiece;
+        checkStorage[possibleMoves] = "[]";
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the KNIGHT can move 1 RIGHT and 2 DOWN
+    if((possibleMoves+1) % 8 != 0 && chessBoard.indexOf(chosenPiece) < 48 && !friendlyPieces.includes(chessBoard[possibleMoves+17]))
+    {
+        possibleMoves+=17;
+        
+        checkStorage[possibleMoves-17] = "[]";
+        checkStorage[possibleMoves] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            legalMoves.push(squareNames[possibleMoves]);
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        checkStorage[possibleMoves-17] = chosenPiece;
+        checkStorage[possibleMoves] = "[]";
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the KNIGHT can move 2 RIGHT and 1 DOWN
+    if((possibleMoves+1) % 8 != 0 && (possibleMoves+2) % 8 != 0 && chessBoard.indexOf(chosenPiece) < 56 && !friendlyPieces.includes(chessBoard[possibleMoves+10]))
+    {
+        possibleMoves+=10;
+        
+        checkStorage[possibleMoves-10] = "[]";
+        checkStorage[possibleMoves] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            legalMoves.push(squareNames[possibleMoves]);
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        checkStorage[possibleMoves-10] = chosenPiece;
+        checkStorage[possibleMoves] = "[]";
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the KNIGHT can move 1 LEFT and 2 DOWN
+    if(possibleMoves % 8 != 0 && chessBoard.indexOf(chosenPiece) < 48 && !friendlyPieces.includes(chessBoard[possibleMoves+15]))
+    {
+        possibleMoves+=15;
+        
+        checkStorage[possibleMoves-15] = "[]";
+        checkStorage[possibleMoves] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            legalMoves.push(squareNames[possibleMoves]);
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        checkStorage[possibleMoves-15] = chosenPiece;
+        checkStorage[possibleMoves] = "[]";
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the KNIGHT can move 2 LEFT and 1 DOWN
+    if(possibleMoves % 8 != 0 && (possibleMoves-1) % 8 != 0 && chessBoard.indexOf(chosenPiece) < 56 && !friendlyPieces.includes(chessBoard[possibleMoves+6]))
+    {
+        possibleMoves+=6;
+        
+        checkStorage[possibleMoves-6] = "[]";
+        checkStorage[possibleMoves] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            legalMoves.push(squareNames[possibleMoves]);
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        checkStorage[possibleMoves-6] = chosenPiece;
+        checkStorage[possibleMoves] = "[]";
+    }
+}
+
+function BishopMovement()
+{
+    var possibleMoves = chessBoard.indexOf(chosenPiece);  
+    //Checks if the BISHOP can move UP-RIGHT. 
+    //If the piece is not on the edge and there is no friendly piece UP-RIGHT
+    if((possibleMoves+1) % 8 != 0 && chessBoard.indexOf(chosenPiece) > 7 && !friendlyPieces.includes(chessBoard[possibleMoves-7]))
+    {
+        console.log("Checking Up-Right");
+
+        checkStorage[possibleMoves] = "[]";
+        checkStorage[possibleMoves-7] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            while((possibleMoves+1) % 8 != 0 && possibleMoves-7 >= 0 && !friendlyPieces.includes(chessBoard[possibleMoves-7]))
+            {
+                if(enemyPieces.includes(chessBoard[possibleMoves-7]))
+                {
+                    possibleMoves-=7;
+                    legalMoves.push(squareNames[possibleMoves]);
+                    break;
+                }
+                possibleMoves-=7;
+                legalMoves.push(squareNames[possibleMoves]);   
+            }
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        possibleMoves = chessBoard.indexOf(chosenPiece);
+        checkStorage[possibleMoves] = chosenPiece;
+        checkStorage[possibleMoves-7] = "[]";
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the BISHOP can move UP-LEFT.
+    //If the piece is not on the edge and there is no friendly piece UP-LEFT
+    if(possibleMoves % 8 != 0 && chessBoard.indexOf(chosenPiece) > 7 && !friendlyPieces.includes(chessBoard[possibleMoves-9]))
+    {
+        console.log("Checking Up-Left");
+
+        checkStorage[possibleMoves] = "[]";
+        checkStorage[possibleMoves-9] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            while(possibleMoves % 8 != 0 && possibleMoves-9 >= 0 && !friendlyPieces.includes(chessBoard[possibleMoves-9]))
+            {
+                if(enemyPieces.includes(chessBoard[possibleMoves-9]))
+                {
+                    possibleMoves-=9;
+                    legalMoves.push(squareNames[possibleMoves]);
+                    break;
+                }
+                possibleMoves-=9;
+                legalMoves.push(squareNames[possibleMoves]);   
+            }
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        possibleMoves = chessBoard.indexOf(chosenPiece);
+        checkStorage[possibleMoves] = chosenPiece;
+        checkStorage[possibleMoves-9] = "[]";
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+    
+    //Checks if the BISHOP can move DOWN-RIGHT. 
+    //If the piece is not on the edge and there is no friendly piece DOWN-RIGHT
+    if((possibleMoves+1) % 8 != 0 && chessBoard.indexOf(chosenPiece) < 56 && !friendlyPieces.includes(chessBoard[possibleMoves+9]))
+    {
+        console.log("Checking Down-Right");
+
+        checkStorage[possibleMoves] = "[]";
+        checkStorage[possibleMoves+9] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            while((possibleMoves+1) % 8 != 0 && possibleMoves+9 <= 63 && !friendlyPieces.includes(chessBoard[possibleMoves+9]))
+            {
+                if(enemyPieces.includes(chessBoard[possibleMoves+9]))
+                {
+                    possibleMoves+=9;
+                    legalMoves.push(squareNames[possibleMoves]);
+                    break;
+                }
+                possibleMoves+=9;
+                legalMoves.push(squareNames[possibleMoves]);   
+            }
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        possibleMoves = chessBoard.indexOf(chosenPiece);
+        checkStorage[possibleMoves] = chosenPiece;
+        checkStorage[possibleMoves+9] = "[]";
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the BISHOP can move DOWN-LEFT.
+    //If the piece is not on the edge and there is no friendly piece DOWN-LEFT
+    if(possibleMoves % 8 != 0 && chessBoard.indexOf(chosenPiece) < 56 && !friendlyPieces.includes(chessBoard[possibleMoves+7]))
+    {
+        console.log("Checking Down-Left");
+
+        checkStorage[possibleMoves] = "[]";
+        checkStorage[possibleMoves+7] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            while(possibleMoves % 8 != 0 && possibleMoves+7 <= 63 && !friendlyPieces.includes(chessBoard[possibleMoves+7]))
+            {
+                if(enemyPieces.includes(chessBoard[possibleMoves+7]))
+                {
+                    possibleMoves+=7;
+                    legalMoves.push(squareNames[possibleMoves]);
+                    break;
+                }
+                possibleMoves+=7;
+                legalMoves.push(squareNames[possibleMoves]);   
+            }
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        possibleMoves = chessBoard.indexOf(chosenPiece);
+        checkStorage[possibleMoves] = chosenPiece;
+        checkStorage[possibleMoves+7] = "[]";
+    }
+}
+
+function QueenMovement()
+{
+    RookMovement();
+    BishopMovement();
+}
+
+function KingMovement()
+{
+    var possibleMoves = chessBoard.indexOf(chosenPiece);    
+    //Checks if the KING can move to the RIGHT
+    if((possibleMoves + 1) % 8 != 0 && !friendlyPieces.includes(chessBoard[possibleMoves+1]))
+    {
+        possibleMoves++;
+        
+        checkStorage[possibleMoves-1] = "[]";
+        checkStorage[possibleMoves] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            legalMoves.push(squareNames[possibleMoves]);
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        checkStorage[possibleMoves-1] = chosenPiece;
+        checkStorage[possibleMoves] = "[]";                                                                                    
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the KING can move to the LEFT
+    if(possibleMoves % 8 != 0 && possibleMoves != 0 && !friendlyPieces.includes(chessBoard[possibleMoves-1]))
+    {
+        possibleMoves--;
+        
+        checkStorage[possibleMoves+1] = "[]";
+        checkStorage[possibleMoves] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            legalMoves.push(squareNames[possibleMoves]);
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        checkStorage[possibleMoves+1] = chosenPiece;
+        checkStorage[possibleMoves] = "[]";
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the KING can move DOWN. If it is >= 56 it is on the bottom line.
+    if((chessBoard.indexOf(chosenPiece) < 56) && !friendlyPieces.includes(chessBoard[possibleMoves+8]))
+    {
+        possibleMoves+=8;
+        
+        checkStorage[possibleMoves-8] = "[]";
+        checkStorage[possibleMoves] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            legalMoves.push(squareNames[possibleMoves]);
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        checkStorage[possibleMoves-8] = chosenPiece;
+        checkStorage[possibleMoves] = "[]";
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the KING can move UP. If it is <= 7 it is on the bottom line.
+    if(chessBoard.indexOf(chosenPiece) > 7 && !friendlyPieces.includes(chessBoard[possibleMoves-8]))
+    {
+        possibleMoves-=8;
+        
+        checkStorage[possibleMoves+8] = "[]";
+        checkStorage[possibleMoves] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            legalMoves.push(squareNames[possibleMoves]);
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        checkStorage[possibleMoves+8] = chosenPiece;
+        checkStorage[possibleMoves] = "[]";
+    } 
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the KING can move UP-RIGHT. 
+    //If the piece is not on the edge and there is no friendly piece UP-RIGHT
+    if((possibleMoves+1) % 8 != 0 && chessBoard.indexOf(chosenPiece) > 7 && !friendlyPieces.includes(chessBoard[possibleMoves-7]))
+    {
+        possibleMoves-=7;
+        
+        checkStorage[possibleMoves+7] = "[]";
+        checkStorage[possibleMoves] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            legalMoves.push(squareNames[possibleMoves]);
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        checkStorage[possibleMoves+7] = chosenPiece;
+        checkStorage[possibleMoves] = "[]";   
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the KING can move UP-LEFT.
+    //If the piece is not on the edge and there is no friendly piece UP-LEFT
+    if(possibleMoves % 8 != 0 && chessBoard.indexOf(chosenPiece) > 7 && !friendlyPieces.includes(chessBoard[possibleMoves-9]))
+    {
+        possibleMoves-=9;
+        
+        checkStorage[possibleMoves+9] = "[]";
+        checkStorage[possibleMoves] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            legalMoves.push(squareNames[possibleMoves]);
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        checkStorage[possibleMoves+9] = chosenPiece;
+        checkStorage[possibleMoves] = "[]"; 
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+    
+    //Checks if the KING can move DOWN-RIGHT. 
+    //If the piece is not on the edge and there is no friendly piece DOWN-RIGHT
+    if((possibleMoves+1) % 8 != 0 && chessBoard.indexOf(chosenPiece) < 56 && !friendlyPieces.includes(chessBoard[possibleMoves+9]))
+    {
+        possibleMoves+=9;
+        
+        checkStorage[possibleMoves-9] = "[]";
+        checkStorage[possibleMoves] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            legalMoves.push(squareNames[possibleMoves]);
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        checkStorage[possibleMoves-9] = chosenPiece;
+        checkStorage[possibleMoves] = "[]";
+    }
+    possibleMoves = chessBoard.indexOf(chosenPiece);
+
+    //Checks if the KING can move DOWN-LEFT.
+    //If the piece is not on the edge and there is no friendly piece DOWN-LEFT
+    if(possibleMoves % 8 != 0 && chessBoard.indexOf(chosenPiece) < 56 && !friendlyPieces.includes(chessBoard[possibleMoves+7]))
+    {
+        possibleMoves+=7;
+        
+        checkStorage[possibleMoves-7] = "[]";
+        checkStorage[possibleMoves] = chosenPiece;
+        EnemyCheckChecker();  
+        
+        if(!isCheck)
+        {
+            console.log("Not check!");
+            legalMoves.push(squareNames[possibleMoves]);
+        }
+        else
+        {
+            console.log("Check!");
+            isCheck = false;
+        }
+        checkStorage[possibleMoves-7] = chosenPiece;
+        checkStorage[possibleMoves] = "[]";
+    }
+}
+
+//CHECK FUNCTIONS
+function EnemyCheckChecker()
+{
+    checkSquares.splice(0);
+    for(i = 0; i < enemyPieces.length; i++)
+    {
+        kingSlayer = enemyPieces[i];
+        //kingSlayer = kingSlayer;
+        //checkSquares = checkSquares;
+
+        CheckManager();
+    }
+
+    //Checks if checkSquares includes a square with the friendly king
+    //If it does it clears the legal moves
+    if(checkSquares.includes(squareNames[chessBoard.indexOf("ki")]) || checkSquares.includes(squareNames[chessBoard.indexOf("KI")]))
+    {
+        isCheck = true;
+        console.log("Check!"); 
+    } 
+}
+
+//The following functions is for checking if the enemy pawns would make the friendly king in check
+function CheckManager()
+{
+    if(kingSlayer.includes("p") || kingSlayer.includes("P") )
+    {
+        PawnChecker();
+    }
+    else if(kingSlayer.includes("r") || kingSlayer.includes("R"))
+    {
+        RookChecker();
+    }
+    else if(kingSlayer.includes("n") || kingSlayer.includes("N"))
+    {
+        KnightChecker();
+    }
+    else if(kingSlayer.includes("b") || kingSlayer.includes("B"))
+    {
+        BishopChecker();
+    }
+    else if(kingSlayer.includes("k")|| kingSlayer.includes("K"))
+    {
+        KingChecker();
+    }
+    else if(kingSlayer.includes("q") || kingSlayer.includes("Q"))
+    {
+        QueenChecker();
+    }    
+}
+
+//ADD SO THE PAWN CAN MOVE DIAGONALY IF ADJACENT PAWN MOVED TWO SQUARES
+//Controls the pawn movement.
+//Depending on wich players turn it is there will be a different equation.
+function PawnChecker()
+{
+    var possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+    checkSquares.push("Pawn");
+    if(isWhiteTurn)
+    {    
+        //If the chosen pawn isn't on the A-row, wich all is devisble by 8, the square should be added to the legalMoves array 
+        if((possibleEnemyMoves) % 8 != 0 && !blackPieces.includes(checkStorage[possibleEnemyMoves+7]))
+        {
+            checkSquares.push(squareNames[possibleEnemyMoves+7]);
+        }  
+    
+        //If the chosen pawn isn't on the A-row, wich all is devisble by 8, the square should be added to the legalMoves array
+        if((possibleEnemyMoves+1) % 8 != 0 && !blackPieces.includes(checkStorage[possibleEnemyMoves+9]))
+        {
+            checkSquares.push(squareNames[possibleEnemyMoves+9]);
+        }  
+    }
+    else //Black
+    {
+       //If the chosen pawn isn't on the H-row, wich all +1 is devisble by 8, the square should be added to the legalMoves array 
+       if((possibleEnemyMoves + 1) % 8 != 0 && !whitePieces.includes(checkStorage[possibleEnemyMoves-7]))
+        {
+            checkSquares.push(squareNames[possibleEnemyMoves-7]);
+        }  
+    
+        //If the chosen pawn isn't on the A-row, wich all is devisble by 8, the square should be added to the legalMoves array
+        if((possibleEnemyMoves) % 8 != 0 && !whitePieces.includes(checkStorage[possibleEnemyMoves-9]))
+        {
+            checkSquares.push(squareNames[possibleEnemyMoves-9]);
+        } 
+    }
+}
+
+function RookChecker()
+{    
+    var possibleEnemyMoves = checkStorage.indexOf(kingSlayer);   
+    checkSquares.push("Rook");
+    //Checks if the ROOK can move to the RIGHT
+    if((possibleEnemyMoves + 1) % 8 != 0 && !enemyPieces.includes(checkStorage[possibleEnemyMoves+1]))
+    {
+        while((possibleEnemyMoves + 1) % 8 != 0 && !enemyPieces.includes(checkStorage[possibleEnemyMoves+1]))
+        {
+            if(friendlyPieces.includes(checkStorage[possibleEnemyMoves+1]))
+            {
+                possibleEnemyMoves++;
+                checkSquares.push(squareNames[possibleEnemyMoves]);
+                break;
+            }
+            possibleEnemyMoves++;
+            checkSquares.push(squareNames[possibleEnemyMoves]);
+        }                                                                                     
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+
+    //Checks if the ROOK can move to the LEFT
+    if(possibleEnemyMoves % 8 != 0 && possibleEnemyMoves != 0 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-1]))
+    {
+        while(possibleEnemyMoves % 8 != 0 && possibleEnemyMoves != 0 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-1]))
+        {
+            if(friendlyPieces.includes(checkStorage[possibleEnemyMoves-1]))
+            {
+                possibleEnemyMoves--;
+                checkSquares.push(squareNames[possibleEnemyMoves]);
+                break;
+            }
+            possibleEnemyMoves--;
+            checkSquares.push(squareNames[possibleEnemyMoves]);
+        }
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+
+    //Checks if the ROOK can move DOWN. If it is >= 56 it is on the bottom line.
+    if((checkStorage.indexOf(kingSlayer) < 56) && !enemyPieces.includes(checkStorage[possibleEnemyMoves+8]))
+    {
+        while(possibleEnemyMoves+8 <= 63 && !enemyPieces.includes(checkStorage[possibleEnemyMoves+8]))
+        {
+            if(friendlyPieces.includes(checkStorage[possibleEnemyMoves+8]))
+            {
+                possibleEnemyMoves+=8;
+                checkSquares.push(squareNames[possibleEnemyMoves]);
+                break;
+            }
+            possibleEnemyMoves+=8;
+            checkSquares.push(squareNames[possibleEnemyMoves]);
+        }
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+
+    //Checks if the ROOK can move UP. If it is <= 7 it is on the bottom line.
+    if(checkStorage.indexOf(kingSlayer) > 7 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-8]))
+    {
+        console.log("Checking");
+        while(possibleEnemyMoves-8 >= 0 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-8]))
+        {
+            if(friendlyPieces.includes(checkStorage[possibleEnemyMoves-8]))
+            {
+                possibleEnemyMoves-=8;
+                checkSquares.push(squareNames[possibleEnemyMoves]);
+                break;
+            }
+            possibleEnemyMoves-=8;
+            checkSquares.push(squareNames[possibleEnemyMoves]);
+        } 
+    } 
+}
+
+function KnightChecker()
+{
+    var possibleEnemyMoves = checkStorage.indexOf(kingSlayer); 
+    console.log(possibleEnemyMoves);
+     
+    checkSquares.push("Knight");
+    //Checks if the KNIGHT can move 1 RIGHT and 2 UP
+    if((possibleEnemyMoves+1) % 8 != 0 && checkStorage.indexOf(kingSlayer) > 15 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-15]))
+    {
+        possibleEnemyMoves-=15;
+        console.log(possibleEnemyMoves);
+        checkSquares.push(squareNames[possibleEnemyMoves]);
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+
+    //Checks if the KNIGHT can move 2 RIGHT and 1 UP
+    if((possibleEnemyMoves+1) % 8 != 0 && (possibleEnemyMoves+2) % 8 != 0 && checkStorage.indexOf(kingSlayer) > 7 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-6]))
+    {
+        possibleEnemyMoves-=6;
+        checkSquares.push(squareNames[possibleEnemyMoves]);
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+
+    //Checks if the KNIGHT can move 1 LEFT and 2 UP
+    if(possibleEnemyMoves % 8 != 0 && checkStorage.indexOf(kingSlayer) > 15 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-17]))
+    {
+        possibleEnemyMoves-=17;
+        checkSquares.push(squareNames[possibleEnemyMoves]);
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+
+    //Checks if the KNIGHT can move 2 LEFT and 1 UP
+    if(possibleEnemyMoves % 8 != 0 && (possibleEnemyMoves-1) % 8 != 0 && checkStorage.indexOf(kingSlayer) > 7 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-10]))
+    {
+        possibleEnemyMoves-=10;
+        checkSquares.push(squareNames[possibleEnemyMoves]);
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+
+    //Checks if the KNIGHT can move 1 RIGHT and 2 DOWN
+    if((possibleEnemyMoves+1) % 8 != 0 && checkStorage.indexOf(kingSlayer) < 48 && !enemyPieces.includes(checkStorage[possibleEnemyMoves+17]))
+    {
+        possibleEnemyMoves+=17;
+        checkSquares.push(squareNames[possibleEnemyMoves]);
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+
+    //Checks if the KNIGHT can move 2 RIGHT and 1 DOWN
+    if((possibleEnemyMoves+1) % 8 != 0 && (possibleEnemyMoves+2) % 8 != 0 && checkStorage.indexOf(kingSlayer) < 56 && !enemyPieces.includes(checkStorage[possibleEnemyMoves+10]))
+    {
+        possibleEnemyMoves+=10;
+        checkSquares.push(squareNames[possibleEnemyMoves]);
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+
+    //Checks if the KNIGHT can move 1 LEFT and 2 DOWN
+    if(possibleEnemyMoves % 8 != 0 && checkStorage.indexOf(kingSlayer) < 48 && !enemyPieces.includes(checkStorage[possibleEnemyMoves+15]))
+    {
+        possibleEnemyMoves+=15;
+        checkSquares.push(squareNames[possibleEnemyMoves]);
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+
+    //Checks if the KNIGHT can move 2 LEFT and 1 DOWN
+    if(possibleEnemyMoves % 8 != 0 && (possibleEnemyMoves-1) % 8 != 0 && checkStorage.indexOf(kingSlayer) < 56 && !enemyPieces.includes(checkStorage[possibleEnemyMoves+6]))
+    {
+        possibleEnemyMoves+=6;
+        checkSquares.push(squareNames[possibleEnemyMoves]);
+    }
+}
+
+function BishopChecker()
+{
+    var possibleEnemyMoves = checkStorage.indexOf(kingSlayer);  
+    checkSquares.push("Bishop");
+    //Checks if the BISHOP can move UP-RIGHT. 
+    //If the piece is not on the edge and there is no friendly piece UP-RIGHT
+    if((possibleEnemyMoves+1) % 8 != 0 && checkStorage.indexOf(kingSlayer) > 7 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-7]))
+    {
+        while((possibleEnemyMoves+1) % 8 != 0 && possibleEnemyMoves-7 >= 0 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-7]))
+        {
+            if(friendlyPieces.includes(checkStorage[possibleEnemyMoves-7]))
+            {
+                possibleEnemyMoves-=7;
+                checkSquares.push(squareNames[possibleEnemyMoves]);
+                break;
+            }
+            possibleEnemyMoves-=7;
+            checkSquares.push(squareNames[possibleEnemyMoves]);   
+        }
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+
+    //Checks if the BISHOP can move UP-LEFT.
+    //If the piece is not on the edge and there is no friendly piece UP-LEFT
+    if(possibleEnemyMoves % 8 != 0 && checkStorage.indexOf(kingSlayer) > 7 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-9]))
+    {
+        while(possibleEnemyMoves % 8 != 0 && possibleEnemyMoves-9 >= 0 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-9]))
+        {
+            if(friendlyPieces.includes(checkStorage[possibleEnemyMoves-9]))
+            {
+                possibleEnemyMoves-=9;
+                checkSquares.push(squareNames[possibleEnemyMoves]);
+                break;
+            }
+            possibleEnemyMoves-=9;
+            checkSquares.push(squareNames[possibleEnemyMoves]);   
+        }
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+    
+    //Checks if the BISHOP can move DOWN-RIGHT. 
+    //If the piece is not on the edge and there is no friendly piece DOWN-RIGHT
+    if((possibleEnemyMoves+1) % 8 != 0 && checkStorage.indexOf(kingSlayer) < 56 && !enemyPieces.includes(checkStorage[possibleEnemyMoves+9]))
+    {
+        while((possibleEnemyMoves+1) % 8 != 0 && possibleEnemyMoves+9 <= 63 && !enemyPieces.includes(checkStorage[possibleEnemyMoves+9]))
+        {
+            if(friendlyPieces.includes(checkStorage[possibleEnemyMoves+9]))
+            {
+                possibleEnemyMoves+=9;
+                checkSquares.push(squareNames[possibleEnemyMoves]);
+                break;
+            }
+            possibleEnemyMoves+=9;
+            checkSquares.push(squareNames[possibleEnemyMoves]);   
+        }
+    }
+    var possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+
+    //Checks if the BISHOP can move DOWN-LEFT.
+    //If the piece is not on the edge and there is no friendly piece DOWN-LEFT
+    if(possibleEnemyMoves % 8 != 0 && checkStorage.indexOf(kingSlayer) < 56 && !enemyPieces.includes(checkStorage[possibleEnemyMoves+7]))
+    {
+        while(possibleEnemyMoves % 8 != 0 && possibleEnemyMoves+7 <= 63 && !enemyPieces.includes(checkStorage[possibleEnemyMoves+7]))
+        {
+            if(friendlyPieces.includes(checkStorage[possibleEnemyMoves+7]))
+            {
+                possibleEnemyMoves+=7;
+                checkSquares.push(squareNames[possibleEnemyMoves]);
+                break;
+            }
+            possibleEnemyMoves+=7;
+            checkSquares.push(squareNames[possibleEnemyMoves]);   
+        }
+    }
+}
+
+function QueenChecker()
+{
+    checkSquares.push("Queen");
+    RookChecker();
+    BishopChecker();
+}
+
+function KingChecker()
+{
+    var possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+    checkSquares.push("King");    
+    //Checks if the KING can move to the RIGHT
+    if((possibleEnemyMoves + 1) % 8 != 0 && !enemyPieces.includes(checkStorage[possibleEnemyMoves+1]))
+    {
+        possibleEnemyMoves++;
+        checkSquares.push(squareNames[possibleEnemyMoves]);                                                                                     
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+
+    //Checks if the KING can move to the LEFT
+    if(possibleEnemyMoves % 8 != 0 && possibleEnemyMoves != 0 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-1]))
+    {
+        possibleEnemyMoves--;
+        checkSquares.push(squareNames[possibleEnemyMoves]);
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+
+    //Checks if the KING can move DOWN. If it is >= 56 it is on the bottom line.
+    if((checkStorage.indexOf(kingSlayer) < 56) && !enemyPieces.includes(checkStorage[possibleEnemyMoves+8]))
+    {
+        possibleEnemyMoves+=8;
+        checkSquares.push(squareNames[possibleEnemyMoves]);
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+    //Checks if the KING can move UP. If it is <= 7 it is on the bottom line.
+    if(checkStorage.indexOf(kingSlayer) > 7 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-8]))
+    {
+        possibleEnemyMoves-=8;
+        checkSquares.push(squareNames[possibleEnemyMoves]);
+    } 
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+
+    //Checks if the KING can move UP-RIGHT. 
+    //If the piece is not on the edge and there is no friendly piece UP-RIGHT
+    if((possibleEnemyMoves+1) % 8 != 0 && checkStorage.indexOf(kingSlayer) > 7 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-7]))
+    {
+        possibleEnemyMoves-=7;
+        checkSquares.push(squareNames[possibleEnemyMoves]);   
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+
+    //Checks if the KING can move UP-LEFT.
+    //If the piece is not on the edge and there is no friendly piece UP-LEFT
+    if(possibleEnemyMoves % 8 != 0 && checkStorage.indexOf(kingSlayer) > 7 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-9]))
+    {
+        possibleEnemyMoves-=9;
+        checkSquares.push(squareNames[possibleEnemyMoves]);  
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+    
+    //Checks if the KING can move DOWN-RIGHT. 
+    //If the piece is not on the edge and there is no friendly piece DOWN-RIGHT
+    if((possibleEnemyMoves+1) % 8 != 0 && checkStorage.indexOf(kingSlayer) < 56 && !enemyPieces.includes(checkStorage[possibleEnemyMoves+9]))
+    {
+        possibleEnemyMoves+=9;
+        checkSquares.push(squareNames[possibleEnemyMoves]);
+    }
+    possibleEnemyMoves = checkStorage.indexOf(kingSlayer);
+
+    //Checks if the KING can move DOWN-LEFT.
+    //If the piece is not on the edge and there is no friendly piece DOWN-LEFT
+    if(possibleEnemyMoves % 8 != 0 && checkStorage.indexOf(kingSlayer) < 56 && !enemyPieces.includes(checkStorage[possibleEnemyMoves+7]))
+    {
+        possibleEnemyMoves+=7;
+        checkSquares.push(squareNames[possibleEnemyMoves]);
+    }
+}
+</script>
