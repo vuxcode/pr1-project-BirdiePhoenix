@@ -14,6 +14,7 @@ The final program is not the goal! The aim of the project is to show how you hav
   - Different movement manager when in check
 - Rouqade
 - Pawn take 2 moves next to pawn
+- Fix upgrade
 
 - Buttons if time    
 
