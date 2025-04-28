@@ -199,4 +199,41 @@ For example:
            - it checks if a friendly piece could be moved to prevent checkmate
        - Bugfix
          - Fixed a bug with the king
+        
+     - 2025-04-28 10.15 & 14.30 Worked for 4 hours
+       - Bugfix
+         - Fixed a bug with the check and mate mechanics
+       - 6 Buttons
+         - 1 yes and 1 no button if the player wants to make a castling
+         - 4 buttons for the player to choose wich rook they want to use in the castling if more than 1 is possible (2 for white and 2 for black)
+       - 1 array
+         - unmovedCastling
+           - Stores all the unmoved rooks and kings
+           - Is used by the program to check if the player can make a castling
+       - Removed the StartGame function and moved the code to TurnOrder
+         - Also changed so the StartButton calls for the TurnOrder function istead of StartGame
+       - 6 variables
+         - 4 "isCastling..."
+           - 1 for each of the castling cases
+           - Is true or false depending on that castling is possible
+         - castlingVar and castlingCase
+           - !!!These are not used, forgot to remove them!!!
+       - 8 functions
+         - CastlingChecker
+           - Is called in the TurnOrder function
+           - Checks if castling is possible
+         - CastlingRequest
+           - Updates infoText2 to ask the player if they want to do a Castling
+           - Hides the pieceButton and the output textbox
+           - Shows the castlingYesButton and the castlingNoButton
+         - CastlingButtons
+           - Is called by the castlingYesButton 
+           - Hides the castlingYesButton and CastlingNoButton
+           - Depending on wich castlings that is possible it will change those variables to false and show the corresponding buttons
+         -  4 functions that updates the chessBoard, 1 for each castling case
+           -  Are being called by their corresponding button
+           -  Also removes the relevant elements in the unmovedCastling array
+         -  HideCastlingButtons
+           - Is called in the EndTurn function
+           - Hides all the castling buttons 
     
