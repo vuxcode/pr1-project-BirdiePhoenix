@@ -26,3 +26,5 @@
     Solution The checkStorage didnt update properly so error occured
 14. Problem: The king could move to a square where it would be in check
     Solution: Inside EnemyCheckChecker, replaced chessBoard with checkStorage in the condition for the if-statement
+15. Problem: The player became check mate instead of just check
+    Solution: Changed the i-variables in the for-loops in MateChecker and EnemyCheckChecker so they are not the same
