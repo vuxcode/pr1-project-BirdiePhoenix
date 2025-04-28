@@ -77,7 +77,8 @@ For example:
   - 1 function
     - Created the PieceChooser function
     - This was made so that the player is not asked again what piece they want to move when the program is checking for what squares the king would be in check
-- 2025-04-10 16.00
+
+- 2025-04-10 16.00 0.5 hours
   - 1 function
     - Merged the WhiteTurn- and the BlackTurn-functions to the MovementManager-function
     - This was made to get lesser code. Instead of having two function doing pretty much the same thing, now only one function mange it instead
@@ -173,8 +174,6 @@ For example:
        - If it has: calls the UpgradePiece-finction
        - Else: calls the EndTurn-function
      - (these functions doesn't contain any new code, they where only created to make the buttons work and so infoText2 updates correctly)
-    
-- 30 HOUR MARK
   
 - 2025-04-23,24,25  Worked for 6 hours (was so focused on fixing the check mechanics so I forgot updating this every day)
  - 1 array
@@ -185,6 +184,8 @@ For example:
    - possibleEnemyMoves
      - in the check functions I changed possibleMoves to possibleEnemyMoves to seperate the to variables
  - Added code in all the movement functions so the program checks if moving a piece in a certain way would make the king check
+
+- 30 HOUR MARK
 
 - 2025-04-26 Worked for 1 hour
  - 2 variables
