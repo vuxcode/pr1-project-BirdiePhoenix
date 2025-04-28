@@ -144,7 +144,7 @@ For example:
      - Removed the code for checking if the pawn could move forward, since it only can attack diagonally
      - Switched places on the code in the if(isWhiteTurn)
     
- - 2025-04-18 11.00 Worked for 1 hour
+- 2025-04-18 11.00 Worked for 1 hour
    - Changed the size of info1
      - For better visibility of what players turn it is
    - 1 button
@@ -174,66 +174,66 @@ For example:
        - Else: calls the EndTurn-function
      - (these functions doesn't contain any new code, they where only created to make the buttons work and so infoText2 updates correctly)
     
- - 2025-04-23,24,25  Worked for 6 hours (was so focused on fixing the check mechanics so I forgot updating this every day)
-   - 1 array
-     - checkStorage
-       - Stores the same information as the chessBoard-array
-       - Is used when checking if moving a friendly piece would make the king check and updates when checking for every possible move
-   - 1 variable
-     - possibleEnemyMoves
-       - in the check functions I changed possibleMoves to possibleEnemyMoves to seperate the to variables
-   - Added code in all the movement functions so the program checks if moving a piece in a certain way would make the king check
+- 30 HOUR MARK
   
- - 30 HOUR MARK
+- 2025-04-23,24,25  Worked for 6 hours (was so focused on fixing the check mechanics so I forgot updating this every day)
+ - 1 array
+   - checkStorage
+     - Stores the same information as the chessBoard-array
+     - Is used when checking if moving a friendly piece would make the king check and updates when checking for every possible move
+ - 1 variable
+   - possibleEnemyMoves
+     - in the check functions I changed possibleMoves to possibleEnemyMoves to seperate the to variables
+ - Added code in all the movement functions so the program checks if moving a piece in a certain way would make the king check
+
+- 2025-04-26 Worked for 1 hour
+ - 2 variables
+   - isMate
+     - Checks if a player is mate and hav lost the game
+   - checkingForMate
+     - Is used when checking for mate in the MateChecker-function
+     - If chekingForMate = true, the NoLegalMoves function isn't runned
+ - 1 function
+   - MateChecker
+     - Is similar to the EnemyCheckChecker but instead of checking if an enemy would make the king check
+     - it checks if a friendly piece could be moved to prevent checkmate
+ - Bugfix
+   - Fixed a bug with the king
   
- - 2025-04-26 Worked for 1 hour
-   - 2 variables
-     - isMate
-       - Checks if a player is mate and hav lost the game
-     - checkingForMate
-       - Is used when checking for mate in the MateChecker-function
-       - If chekingForMate = true, the NoLegalMoves function isn't runned
-   - 1 function
-     - MateChecker
-       - Is similar to the EnemyCheckChecker but instead of checking if an enemy would make the king check
-       - it checks if a friendly piece could be moved to prevent checkmate
-   - Bugfix
-     - Fixed a bug with the king
-    
- - 2025-04-28 10.15 & 14.30 Worked for 4 hours
-   - Bugfix
-     - Fixed a bug with the check and mate mechanics
-   - 6 Buttons
-     - 1 yes and 1 no button if the player wants to make a castling
-     - 4 buttons for the player to choose wich rook they want to use in the castling if more than 1 is possible (2 for white and 2 for black)
-   - 1 array
-     - unmovedCastling
-       - Stores all the unmoved rooks and kings
-       - Is used by the program to check if the player can make a castling
-   - Removed the StartGame function and moved the code to TurnOrder
-     - Also changed so the StartButton calls for the TurnOrder function istead of StartGame
-   - 6 variables
-     - 4 "isCastling..."
-       - 1 for each of the castling cases
-       - Is true or false depending on that castling is possible
-     - castlingVar and castlingCase
-       - !!!These are not used, forgot to remove them!!!
-   - 8 functions
-     - CastlingChecker
-       - Is called in the TurnOrder function
-       - Checks if castling is possible
-     - CastlingRequest
-       - Updates infoText2 to ask the player if they want to do a Castling
-       - Hides the pieceButton and the output textbox
-       - Shows the castlingYesButton and the castlingNoButton
-     - CastlingButtons
-       - Is called by the castlingYesButton 
-       - Hides the castlingYesButton and CastlingNoButton
-       - Depending on wich castlings that is possible it will change those variables to false and show the corresponding buttons
-     -  4 functions that updates the chessBoard, 1 for each castling case
-         -  Are being called by their corresponding button
-         -  Also removes the relevant elements in the unmovedCastling array
-       -  HideCastlingButtons
-         - Is called in the EndTurn function
-         - Hides all the castling buttons 
-    
+- 2025-04-28 10.15 & 14.30 Worked for 4 hours
+ - Bugfix
+   - Fixed a bug with the check and mate mechanics
+ - 6 Buttons
+   - 1 yes and 1 no button if the player wants to make a castling
+   - 4 buttons for the player to choose wich rook they want to use in the castling if more than 1 is possible (2 for white and 2 for black)
+ - 1 array
+   - unmovedCastling
+     - Stores all the unmoved rooks and kings
+     - Is used by the program to check if the player can make a castling
+ - Removed the StartGame function and moved the code to TurnOrder
+   - Also changed so the StartButton calls for the TurnOrder function istead of StartGame
+ - 6 variables
+   - 4 "isCastling..."
+     - 1 for each of the castling cases
+     - Is true or false depending on that castling is possible
+   - castlingVar and castlingCase
+     - !!!These are not used, forgot to remove them!!!
+ - 8 functions
+   - CastlingChecker
+     - Is called in the TurnOrder function
+     - Checks if castling is possible
+   - CastlingRequest
+     - Updates infoText2 to ask the player if they want to do a Castling
+     - Hides the pieceButton and the output textbox
+     - Shows the castlingYesButton and the castlingNoButton
+   - CastlingButtons
+     - Is called by the castlingYesButton 
+     - Hides the castlingYesButton and CastlingNoButton
+     - Depending on wich castlings that is possible it will change those variables to false and show the corresponding buttons
+   -  4 functions that updates the chessBoard, 1 for each castling case
+       -  Are being called by their corresponding button
+       -  Also removes the relevant elements in the unmovedCastling array
+     -  HideCastlingButtons
+       - Is called in the EndTurn function
+       - Hides all the castling buttons 
+  
