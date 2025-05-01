@@ -236,5 +236,26 @@ For example:
        -  Also removes the relevant elements in the unmovedCastling array
      -  HideCastlingButtons
        - Is called in the EndTurn function
-       - Hides all the castling buttons 
+       - Hides all the castling buttons
+- 2025-04-30 Worked for 1 hour
+  - 2 functions
+    - EnPassantFunction()
+      - checks if the player can do an en passant
+    - ResetEnPassant()
+      - Empties the legalMoves and enPassantPieces arrays
+  - 1 array
+    - enPassantPieces
+      - Stores what pawns that can do an en passant
+  - 2 variables
+    - startGame
+      - Boolean that makes sure the EnPassantFunction doesn't run at the start of the game
+    - enPassantSquare
+      - Stores what square that is the enPassantSquare. It gets added to the legal moves if en passant is possible.
+     
+- 2025-05-01 worked for 2 hours
+  - Finnished the check mechanics
+    - Solved a bug that made it not work
+        
+
+       
   
