@@ -28,3 +28,5 @@
     Solution: Inside EnemyCheckChecker, replaced chessBoard with checkStorage in the condition for the if-statement
 15. Problem: The player became check mate instead of just check
     Solution: Changed the i-variables in the for-loops in MateChecker and EnemyCheckChecker so they are not the same
+16. Problem: The players could move pieces or not move pieces that was not supposed to or supposed to be moved when in check
+    Solution: When resetting the checkStorage array I had written that the square where the enemy pieces had been moved to during the checking for check was gonna be "[]" which brakes the program if that square contained a friendly piece. Replaced "[]" with chessBoard[possibleMoves]
