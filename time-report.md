@@ -254,14 +254,20 @@ For example:
 - 2025-05-01 worked for 2 hours
   - Finnished the check mechanics
     - Solved a bug that made it not work
-- 2025-05-02 Worked for
+- 2025-05-02 Worked for 2.5 hours
   - Finnished the Upgrade mechanics
   - 1 array
     - upgradeStorage
       - Is used for when calculating what number to add to the upgraded piece
-  - 1 function
+  - 3 function
     - UpgradeChecker()
       - Is calculating what number to add to the upgraded piece
+    - GameOver()
+      - Resets all variables to their starting values
+      - Shows the restartButton
+    - PlayerTurn()
+      - Added this function so the program doesn't moves on to CastlingRequest() or PieceInput() if the game is over
+      - Updates the text to inform what players turn it is and if in check, and then calls CastlingRequest() or PieceInput()
         
 
        
