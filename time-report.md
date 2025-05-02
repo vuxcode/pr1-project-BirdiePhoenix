@@ -268,6 +268,7 @@ For example:
     - PlayerTurn()
       - Added this function so the program doesn't moves on to CastlingRequest() or PieceInput() if the game is over
       - Updates the text to inform what players turn it is and if in check, and then calls CastlingRequest() or PieceInput()
+  - Also started to write text about what everything does
         
 
        
