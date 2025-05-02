@@ -20,14 +20,14 @@
 <script>
 //Stores the opening board. Capital letter stands for black and lowercase stands for white. X is an empty square.
 var chessBoard = [
-    "R1", "N1", "B1", "QU", "KI", "B2", "N2", "R2",
+    "R1", "N1", "B1", "Q1", "KI", "B2", "N2", "R2",
     "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8",
     "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
     "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
     "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
     "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
     "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8",
-    "r1", "n1", "b1", "qu", "ki", "b2", "n2", "r2"
+    "r1", "n1", "b1", "q1", "ki", "b2", "n2", "r2"
 ]; 
 
 //Stores the name of the squares.
@@ -43,14 +43,14 @@ var squareNames = [
 ]; 
 
 var checkStorage = [
-    "R1", "N1", "B1", "QU", "KI", "B2", "N2", "R2",
+    "R1", "N1", "B1", "Q1", "KI", "B2", "N2", "R2",
     "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8",
     "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
     "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
     "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
     "[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]",
     "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8",
-    "r1", "n1", "b1", "qu", "ki", "b2", "n2", "r2"
+    "r1", "n1", "b1", "q1", "ki", "b2", "n2", "r2"
 ];
 
 
@@ -58,13 +58,14 @@ var checkStorage = [
 var unmovedPawns = ["p1", "p2", "p3", "p4", "p5","p6", "p7", "p8", "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"];
 var unmovedCastling = ["ki", "r1", "r2", "KI", "R1", "R2"];
 
-var whitePieces = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "r1", "r2", "b1", "b2", "n1", "n2", "qu", "ki"];
-var blackPieces = ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "R1", "R2", "B1", "B2", "N1", "N2", "QU", "KI"];
+var whitePieces = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "r1", "r2", "b1", "b2", "n1", "n2", "q1", "ki"];
+var blackPieces = ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "R1", "R2", "B1", "B2", "N1", "N2", "Q1", "KI"];
 //For check checking
 var cFCPieces = [];
 
 
-var upgradePieces = ["r", "b", "n", "qu","R", "B", "N", "QU"];
+var upgradePieces = ["r", "b", "n", "q","R", "B", "N", "Q"];
+var upgradeStorage = [];
 
 var enPassantPieces = [];
 
@@ -173,8 +174,6 @@ function PrintBoard()
 //This function controls the actual turns.
 function TurnOrder()
 {
-    console.log(isCheck);
-    
     startButton.style.display = "none";
     squareButton.style.display = "none";
     upgradeButton.style.display = "none";
@@ -591,16 +590,33 @@ function UpgradePiece()
         //Checks if it is a white or a black piece
         if(chosenPiece.includes("p"))
         {
-            upgradeTo = upgradeTo.toLowerCase();
-            chessBoard[chessBoard.indexOf(chosenPiece)] = upgradeTo;   
+            upgradeTo = upgradeTo.toLowerCase();  
         } 
         else if(chosenPiece.includes("P"))
         {
-            upgradeTo = upgradeTo.toUpperCase();
-            chessBoard[chessBoard.indexOf(chosenPiece)] = upgradeTo;
+            upgradeTo = upgradeTo.toUpperCase(); 
         } 
+
+        UpgradeChecker();
+        chessBoard[chessBoard.indexOf(chosenPiece)] = upgradeTo;
+        friendlyPieces.push(upgradeTo);
+
         EndTurn();
     }
+}
+
+function UpgradeChecker()
+{
+    for(var uI = 0; uI < friendlyPieces.length; uI++)
+    {
+        if(friendlyPieces[uI].includes(upgradeTo))
+        {
+            upgradeStorage.push(friendlyPieces[uI]);
+        }
+    }
+
+    upgradeTo = upgradeTo + (upgradeStorage.length + 1);
+    upgradeStorage.splice(0);
 }
 
 function EnPassantFunction()
@@ -1651,7 +1667,6 @@ function PawnChecker()
 
 function RookChecker()
 {
-    console.log(kingSlayer);
     var possibleEnemyMoves = checkStorage.indexOf(kingSlayer);   
     checkSquares.push("Rook");
     //Checks if the ROOK can move to the RIGHT
@@ -1659,7 +1674,6 @@ function RookChecker()
     {
         while((possibleEnemyMoves + 1) % 8 !== 0 && !enemyPieces.includes(checkStorage[possibleEnemyMoves+1]))
         {
-            console.log(squareNames[possibleEnemyMoves]);
             if(friendlyPieces.includes(checkStorage[possibleEnemyMoves+1]))
             {
                 possibleEnemyMoves++;
@@ -1677,9 +1691,6 @@ function RookChecker()
     {
         while(possibleEnemyMoves % 8 !== 0 && possibleEnemyMoves !== 0 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-1]))
         {
-            console.log(squareNames[possibleEnemyMoves]);
-            console.log(possibleEnemyMoves);
-            console.log(checkStorage);
             if(friendlyPieces.includes(checkStorage[possibleEnemyMoves-1]))
             {
                 possibleEnemyMoves--;
@@ -1697,7 +1708,6 @@ function RookChecker()
     {
         while(possibleEnemyMoves+8 <= 63 && !enemyPieces.includes(checkStorage[possibleEnemyMoves+8]))
         {
-            console.log(squareNames[possibleEnemyMoves]);
             if(friendlyPieces.includes(checkStorage[possibleEnemyMoves+8]))
             {
                 possibleEnemyMoves+=8;
@@ -1715,7 +1725,6 @@ function RookChecker()
     {
         while(possibleEnemyMoves-8 >= 0 && !enemyPieces.includes(checkStorage[possibleEnemyMoves-8]))
         {
-            console.log(squareNames[possibleEnemyMoves]);
             if(friendlyPieces.includes(checkStorage[possibleEnemyMoves-8]))
             {
                 possibleEnemyMoves-=8;
