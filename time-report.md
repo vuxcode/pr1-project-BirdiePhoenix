@@ -251,10 +251,17 @@ For example:
       - Boolean that makes sure the EnPassantFunction doesn't run at the start of the game
     - enPassantSquare
       - Stores what square that is the enPassantSquare. It gets added to the legal moves if en passant is possible.
-     
 - 2025-05-01 worked for 2 hours
   - Finnished the check mechanics
     - Solved a bug that made it not work
+- 2025-05-02 Worked for
+  - Finnished the Upgrade mechanics
+  - 1 array
+    - upgradeStorage
+      - Is used for when calculating what number to add to the upgraded piece
+  - 1 function
+    - UpgradeChecker()
+      - Is calculating what number to add to the upgraded piece
         
 
        
