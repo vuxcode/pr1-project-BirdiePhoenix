@@ -165,6 +165,8 @@ var upgradeToPiece;
 var isWhiteTurn = true; 
 //Decides if a player are in check
 var isCheck = false;
+var isCheckingForCheck = false;
+var wouldBeCheck = false;
 //Decides if a player are mate and looses the game
 var isMate = false;
 //Is used when checking for mate. 
@@ -206,7 +208,7 @@ function TurnOrder()
     restartButton.style.display = "none";
     squareButton.style.display = "none";
     upgradeButton.style.display = "none";
-
+    console.log(isCheck);
     if(isMate)
     {
         PrintBoard();
@@ -240,7 +242,9 @@ function TurnOrder()
     }
     
     CastlingChecker();
+    isCheckingForCheck = true;
     EnemyCheckChecker();
+    isCheckingForCheck = false;
 
     //Checks if a player are in check or mate and updates infoText1 accordingly
     if(isCheck)
@@ -304,14 +308,28 @@ function PlayerTurn()
         }  
     }
 
-    if(isCastlingWr1 === true || isCastlingWr2 === true || isCastlingBr1 === true || isCastlingBr2 === true)
+    if(isWhiteTurn)
     {
-        CastlingRequest();
+        if(isCastlingWr1 === true || isCastlingWr2 === true)
+        {
+            CastlingRequest();
+        } 
+        else
+        {
+            PieceInput();
+        }
     }
     else
     {
-        PieceInput();
-    }                                                       
+        if(isCastlingBr1 === true || isCastlingBr2 === true)
+        {
+            CastlingRequest();
+        }
+        else
+        {
+            PieceInput();
+        }
+    }
 }
 
     //CONTINUE EXPLAINING HERE!!!
@@ -324,6 +342,11 @@ function PieceInput()
     castlingNoButton.style.display = "none";
     pieceButton.style.display = "block";
     output.style.display = "block";
+
+    isCastlingWr1 = false;
+    isCastlingWr2 = false;
+    isCastlingBr1 = false;
+    isCastlingBr2 = false;
 }
 
 function PieceChooser()
@@ -434,6 +457,7 @@ function EndTurn()
     {
         isWhiteTurn = true;
     }
+    wouldBeCheck = false;
 
     HideCastlingButtons();
     PrintBoard();
@@ -823,13 +847,13 @@ function PawnMovement()
             checkStorage[possibleMoves-8] = chosenPiece;
             EnemyCheckChecker(); 
 
-            if(!isCheck)
+            if(!wouldBeCheck)
             {
                 legalMoves.push(squareNames[possibleMoves-8]);
             }
             else
             {
-                isCheck = false;
+                wouldBeCheck = false;
             }   
             checkStorage[possibleMoves] = chosenPiece;
             checkStorage[possibleMoves-8] = chessBoard[possibleMoves-8];  
@@ -841,7 +865,7 @@ function PawnMovement()
             checkStorage[possibleMoves-16] = chosenPiece;
             EnemyCheckChecker(); 
 
-            if(!isCheck)
+            if(!wouldBeCheck)
             {
                 legalMoves.push(squareNames[possibleMoves-16]);
                 //If the pawn can move two steps, the enPassantSquare is declared here
@@ -850,7 +874,7 @@ function PawnMovement()
             }
             else
             {
-                isCheck = false;
+                wouldBeCheck = false;
             }
             checkStorage[possibleMoves] = chosenPiece;
             checkStorage[possibleMoves-16] = chessBoard[possibleMoves-16];
@@ -866,13 +890,13 @@ function PawnMovement()
                 checkStorage[possibleMoves-7] = chosenPiece;
                 EnemyCheckChecker(); 
 
-                if(!isCheck)
+                if(!wouldBeCheck)
                 {
                     legalMoves.push(squareNames[possibleMoves-7]);
                 }
                 else
                 {
-                    isCheck = false;
+                    wouldBeCheck = false;
                 }
                 checkStorage[possibleMoves] = chosenPiece;
                 checkStorage[possibleMoves-7] = chessBoard[possibleMoves-7];
@@ -888,13 +912,13 @@ function PawnMovement()
                 checkStorage[possibleMoves-9] = chosenPiece;
                 EnemyCheckChecker(); 
 
-                if(!isCheck)
+                if(!wouldBeCheck)
                 {
                     legalMoves.push(squareNames[possibleMoves-9]);
                 }
                 else
                 {
-                    isCheck = false;
+                    wouldBeCheck = false;
                 }
                 checkStorage[possibleMoves] = chosenPiece;
                 checkStorage[possibleMoves-9] = chessBoard[possibleMoves-9];
@@ -909,13 +933,13 @@ function PawnMovement()
             checkStorage[possibleMoves+8] = chosenPiece;
             EnemyCheckChecker(); 
 
-            if(!isCheck)
+            if(!wouldBeCheck)
             {
                 legalMoves.push(squareNames[possibleMoves+8]);
             }
             else
             {
-                isCheck = false;
+                wouldBeCheck = false;
             }
             checkStorage[possibleMoves] = chosenPiece;
             checkStorage[possibleMoves+8] = chessBoard[possibleMoves+8];
@@ -927,14 +951,14 @@ function PawnMovement()
             checkStorage[possibleMoves+16] = chosenPiece;
             EnemyCheckChecker(); 
             
-            if(!isCheck)
+            if(!wouldBeCheck)
             {
                 legalMoves.push(squareNames[possibleMoves+16]);
                 enPassantSquare = squareNames[possibleMoves+8];
             }
             else
             {
-                isCheck = false;
+                wouldBeCheck = false;
             }
             checkStorage[possibleMoves] = chosenPiece;
             checkStorage[possibleMoves+16] = chessBoard[possibleMoves+16];
@@ -950,13 +974,13 @@ function PawnMovement()
                 checkStorage[possibleMoves+7] = chosenPiece;
                 EnemyCheckChecker(); 
                 
-                if(!isCheck)
+                if(!wouldBeCheck)
                 {
                     legalMoves.push(squareNames[possibleMoves+7]);
                 }
                 else
                 {
-                    isCheck = false;
+                    wouldBeCheck = false;
                 }
                 checkStorage[possibleMoves] = chosenPiece;
                 checkStorage[possibleMoves+7] = chessBoard[possibleMoves+7];
@@ -972,13 +996,13 @@ function PawnMovement()
                 checkStorage[possibleMoves+9] = chosenPiece;
                 EnemyCheckChecker(); 
                 
-                if(!isCheck)
+                if(!wouldBeCheck)
                 {
                     legalMoves.push(squareNames[possibleMoves+9]);
                 }
                 else
                 {
-                    isCheck = false;
+                    wouldBeCheck = false;
                 }
                 checkStorage[possibleMoves] = chosenPiece;
                 checkStorage[possibleMoves+9] = chessBoard[possibleMoves+9];
@@ -997,7 +1021,7 @@ function RookMovement()
         checkStorage[possibleMoves+1] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             while((possibleMoves + 1) % 8 !== 0 && !friendlyPieces.includes(chessBoard[possibleMoves+1]))
             {
@@ -1013,7 +1037,7 @@ function RookMovement()
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         possibleMoves = chessBoard.indexOf(chosenPiece);
         checkStorage[possibleMoves] = chosenPiece;
@@ -1028,7 +1052,7 @@ function RookMovement()
         checkStorage[possibleMoves-1] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             while(possibleMoves % 8 !== 0 && possibleMoves !== 0 && !friendlyPieces.includes(chessBoard[possibleMoves-1]))
             {
@@ -1044,7 +1068,7 @@ function RookMovement()
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         possibleMoves = chessBoard.indexOf(chosenPiece);
         checkStorage[possibleMoves] = chosenPiece;
@@ -1059,7 +1083,7 @@ function RookMovement()
         checkStorage[possibleMoves+8] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             while(possibleMoves+8 <= 63 && !friendlyPieces.includes(chessBoard[possibleMoves+8]))
             {
@@ -1075,7 +1099,7 @@ function RookMovement()
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         possibleMoves = chessBoard.indexOf(chosenPiece);
         checkStorage[possibleMoves] = chosenPiece;
@@ -1090,7 +1114,7 @@ function RookMovement()
         checkStorage[possibleMoves-8] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             while(possibleMoves-8 >= 0 && !friendlyPieces.includes(chessBoard[possibleMoves-8]))
             {
@@ -1106,7 +1130,7 @@ function RookMovement()
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         possibleMoves = chessBoard.indexOf(chosenPiece);
         checkStorage[possibleMoves] = chosenPiece;
@@ -1127,13 +1151,13 @@ function KnightMovement()
         checkStorage[possibleMoves] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             legalMoves.push(squareNames[possibleMoves]);
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         checkStorage[possibleMoves+15] = chosenPiece;
         checkStorage[possibleMoves] = chessBoard[possibleMoves];
@@ -1149,13 +1173,13 @@ function KnightMovement()
         checkStorage[possibleMoves] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             legalMoves.push(squareNames[possibleMoves]);
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         checkStorage[possibleMoves+6] = chosenPiece;
         checkStorage[possibleMoves] = chessBoard[possibleMoves];
@@ -1171,13 +1195,13 @@ function KnightMovement()
         checkStorage[possibleMoves] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             legalMoves.push(squareNames[possibleMoves]);
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         checkStorage[possibleMoves+17] = chosenPiece;
         checkStorage[possibleMoves] = chessBoard[possibleMoves];
@@ -1193,13 +1217,13 @@ function KnightMovement()
         checkStorage[possibleMoves] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             legalMoves.push(squareNames[possibleMoves]);
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         checkStorage[possibleMoves+10] = chosenPiece;
         checkStorage[possibleMoves] = chessBoard[possibleMoves];
@@ -1215,13 +1239,13 @@ function KnightMovement()
         checkStorage[possibleMoves] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             legalMoves.push(squareNames[possibleMoves]);
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         checkStorage[possibleMoves-17] = chosenPiece;
         checkStorage[possibleMoves] = chessBoard[possibleMoves];
@@ -1237,13 +1261,13 @@ function KnightMovement()
         checkStorage[possibleMoves] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             legalMoves.push(squareNames[possibleMoves]);
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         checkStorage[possibleMoves-10] = chosenPiece;
         checkStorage[possibleMoves] = chessBoard[possibleMoves];
@@ -1259,13 +1283,13 @@ function KnightMovement()
         checkStorage[possibleMoves] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             legalMoves.push(squareNames[possibleMoves]);
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         checkStorage[possibleMoves-15] = chosenPiece;
         checkStorage[possibleMoves] = chessBoard[possibleMoves];
@@ -1281,13 +1305,13 @@ function KnightMovement()
         checkStorage[possibleMoves] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             legalMoves.push(squareNames[possibleMoves]);
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         checkStorage[possibleMoves-6] = chosenPiece;
         checkStorage[possibleMoves] = chessBoard[possibleMoves];
@@ -1305,7 +1329,7 @@ function BishopMovement()
         checkStorage[possibleMoves-7] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             while((possibleMoves+1) % 8 !== 0 && possibleMoves-7 >= 0 && !friendlyPieces.includes(chessBoard[possibleMoves-7]))
             {
@@ -1321,7 +1345,7 @@ function BishopMovement()
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         possibleMoves = chessBoard.indexOf(chosenPiece);
         checkStorage[possibleMoves] = chosenPiece;
@@ -1337,7 +1361,7 @@ function BishopMovement()
         checkStorage[possibleMoves-9] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             while(possibleMoves % 8 !== 0 && possibleMoves-9 >= 0 && !friendlyPieces.includes(chessBoard[possibleMoves-9]))
             {
@@ -1353,7 +1377,7 @@ function BishopMovement()
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         possibleMoves = chessBoard.indexOf(chosenPiece);
         checkStorage[possibleMoves] = chosenPiece;
@@ -1369,7 +1393,7 @@ function BishopMovement()
         checkStorage[possibleMoves+9] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             while((possibleMoves+1) % 8 !== 0 && possibleMoves+9 <= 63 && !friendlyPieces.includes(chessBoard[possibleMoves+9]))
             {
@@ -1385,7 +1409,7 @@ function BishopMovement()
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         possibleMoves = chessBoard.indexOf(chosenPiece);
         checkStorage[possibleMoves] = chosenPiece;
@@ -1401,7 +1425,7 @@ function BishopMovement()
         checkStorage[possibleMoves+7] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             while(possibleMoves % 8 !== 0 && possibleMoves+7 <= 63 && !friendlyPieces.includes(chessBoard[possibleMoves+7]))
             {
@@ -1417,7 +1441,7 @@ function BishopMovement()
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         possibleMoves = chessBoard.indexOf(chosenPiece);
         checkStorage[possibleMoves] = chosenPiece;
@@ -1443,13 +1467,17 @@ function KingMovement()
         checkStorage[possibleMoves] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(checkingForMate)
+        {
+
+        }
+        if(!wouldBeCheck)
         {
             legalMoves.push(squareNames[possibleMoves]);
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         checkStorage[possibleMoves-1] = chosenPiece;
         checkStorage[possibleMoves] = chessBoard[possibleMoves];
@@ -1465,13 +1493,13 @@ function KingMovement()
         checkStorage[possibleMoves] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             legalMoves.push(squareNames[possibleMoves]);
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         checkStorage[possibleMoves+1] = chosenPiece;
         checkStorage[possibleMoves] = chessBoard[possibleMoves];
@@ -1487,13 +1515,13 @@ function KingMovement()
         checkStorage[possibleMoves] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             legalMoves.push(squareNames[possibleMoves]);
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         checkStorage[possibleMoves-8] = chosenPiece;
         checkStorage[possibleMoves] = chessBoard[possibleMoves];
@@ -1509,13 +1537,13 @@ function KingMovement()
         checkStorage[possibleMoves] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             legalMoves.push(squareNames[possibleMoves]);
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         checkStorage[possibleMoves+8] = chosenPiece;
         checkStorage[possibleMoves] = chessBoard[possibleMoves];
@@ -1532,13 +1560,13 @@ function KingMovement()
         checkStorage[possibleMoves] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             legalMoves.push(squareNames[possibleMoves]);
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         checkStorage[possibleMoves+7] = chosenPiece;
         checkStorage[possibleMoves] = chessBoard[possibleMoves];
@@ -1555,13 +1583,13 @@ function KingMovement()
         checkStorage[possibleMoves] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             legalMoves.push(squareNames[possibleMoves]);
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         checkStorage[possibleMoves+9] = chosenPiece;
         checkStorage[possibleMoves] = chessBoard[possibleMoves];
@@ -1578,13 +1606,13 @@ function KingMovement()
         checkStorage[possibleMoves] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             legalMoves.push(squareNames[possibleMoves]);
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         checkStorage[possibleMoves-9] = chosenPiece;
         checkStorage[possibleMoves] = chessBoard[possibleMoves];
@@ -1601,13 +1629,13 @@ function KingMovement()
         checkStorage[possibleMoves] = chosenPiece;
         EnemyCheckChecker();  
         
-        if(!isCheck)
+        if(!wouldBeCheck)
         {
             legalMoves.push(squareNames[possibleMoves]);
         }
         else
         {
-            isCheck = false;
+            wouldBeCheck = false;
         }
         checkStorage[possibleMoves-7] = chosenPiece;
         checkStorage[possibleMoves] = chessBoard[possibleMoves];
@@ -1622,6 +1650,7 @@ function MateChecker()
     {
         chosenPiece = friendlyPieces[iM];
         MovementManager();
+        isCheck = true;
     }
     checkingForMate = false;
 
@@ -1646,12 +1675,26 @@ function EnemyCheckChecker()
         CheckManager();
     }
 
+    if(isCheckingForCheck)
+    {
+        if(checkSquares.includes(squareNames[checkStorage.indexOf("ki")]) || checkSquares.includes(squareNames[checkStorage.indexOf("KI")]))
+        {
+            isCheck = true;
+        }
+        else
+        {
+            isCheck = false;
+        }
+    }
+    else
+    {
+        if(checkSquares.includes(squareNames[checkStorage.indexOf("ki")]) || checkSquares.includes(squareNames[checkStorage.indexOf("KI")]))
+        {
+            wouldBeCheck = true;
+        }
+    }
     //Checks if checkSquares includes a square with the friendly king
     //If it does, it clears the legal moves
-    if(checkSquares.includes(squareNames[checkStorage.indexOf("ki")]) || checkSquares.includes(squareNames[checkStorage.indexOf("KI")]))
-    {
-        isCheck = true;
-    }
 }
 
 //The following functions is for checking if the enemy pawns would make the friendly king in check
@@ -2054,5 +2097,8 @@ function GameOver()
 
     whitePieces = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "r1", "r2", "b1", "b2", "n1", "n2", "q1", "ki"];
     blackPieces = ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "R1", "R2", "B1", "B2", "N1", "N2", "Q1", "KI"];
+
+    checkSquares.splice(0);
+    legalMoves.splice(0);
 }
 </script>
