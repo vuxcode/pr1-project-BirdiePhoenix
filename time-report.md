@@ -269,6 +269,16 @@ For example:
       - Added this function so the program doesn't moves on to CastlingRequest() or PieceInput() if the game is over
       - Updates the text to inform what players turn it is and if in check, and then calls CastlingRequest() or PieceInput()
   - Also started to write text about what everything does
+- 2025-05-03 Worked for 1.5 hours
+  - 2 variables
+    - isCheckingForCheck
+      - Is used in the EnemyCheckChecker()
+      - When checking if a player is in check, the variable is = true and the function will check if it should turn isCheck false or true
+    - wouldBeCheck
+      - replaced the isCheck variable inside the movement functions
+      - this was changed because it created problems to use isCheck both when checking if a player is in check and when checking if moving a piece to a square would make the king check.
+  - Added so all isCastling variables are turned false in case the player choses not to do castling, so that the next player doesnt get the question
+  - In GameOver() I added so legalMoves and checkSquares are cleared
         
 
        
