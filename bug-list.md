@@ -30,3 +30,7 @@
     Solution: Changed the i-variables in the for-loops in MateChecker and EnemyCheckChecker so they are not the same
 16. Problem: The players could move pieces or not move pieces that was not supposed to or supposed to be moved when in check
     Solution: When resetting the checkStorage array I had written that the square where the enemy pieces had been moved to during the checking for check was gonna be "[]" which brakes the program if that square contained a friendly piece. Replaced "[]" with chessBoard[possibleMoves]
+17. Problem: The check mechanics didn't quite work as it should
+    Solution: I created the wouldBeCheck variable so that the isCheck wasn't turned false when it shouldn't be
+18. Problem: The next player was asked for castling when previously player pressed no on the question
+    Solution: Added so all isCastling... is being turned false in PieceInput() since the correct ones is turned false in CheckingForCastling() in TurnOrder()
