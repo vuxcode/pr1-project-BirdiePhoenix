@@ -122,6 +122,9 @@ var blackPieces = ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "R1", "R2", "
 var upgradePieces = ["r", "b", "n", "q","R", "B", "N", "Q"];
 //Is used when calculating what number to add after the upgraded piece
 var upgradeStorage = [];
+var upgradeWhitePieces = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "r1", "r2", "b1", "b2", "n1", "n2", "q1", "ki"];
+var upgradeBlackPieces = ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "R1", "R2", "B1", "B2", "N1", "N2", "Q1", "KI"];
+var upgradeFriendlyPieces;
 
 //Stores what pawns that can make en passant
 var enPassantPieces = [];
@@ -156,6 +159,7 @@ var isCastlingWr2 = false;
 var isCastlingBr1 = false;
 var isCastlingBr2 = false;
 //A variable that stores what square a pawn is moved to when performing an en passant
+
 var enPassantSquare;
 //A variable that decides what piece a pawn is being upgraded to
 var upgradeToPiece;
@@ -470,6 +474,7 @@ function EndTurn()
     }
     //Resets wouldBeCheck so no bugs appear during the next players turn
     wouldBeCheck = false;
+    enPassantSquare = "";
 
     //Hides the castling buttons, then update the board, then back to TurnOrder()
     HideCastlingButtons();
@@ -662,19 +667,12 @@ function HideCastlingButtons()
 function CheckForUpgrade()
 {
     //Checks if the chosenPiece includes p or P
-    if(chosenPiece.includes("p") || chosenPiece.includes("P"))
+    //and if the pawn has reached the top row (index <= 7) or the bottom row (index >= 56)
+    if((chosenPiece.includes("p") || chosenPiece.includes("P")) && (chessBoard.indexOf(chosenPiece) <= 7 || chessBoard.indexOf(chosenPiece) >= 56))
     {
-        //Checks if the pawn has reached the top row (index <= 7) or the bottom row (index >= 56)
-        if(chessBoard.indexOf(chosenPiece) <= 7 || chessBoard.indexOf(chosenPiece) >= 56)
-        {
-            upgradeButton.style.display = "block"; 
-            squareButton.style.display = "none";
-            infoText2.innerHTML = "What piece do you want to upgrade the pawn to?";
-        }
-        else
-        {
-            EndTurn();
-        }       
+        upgradeButton.style.display = "block"; 
+        squareButton.style.display = "none";
+        infoText2.innerHTML = "What piece do you want to upgrade the pawn to?";    
     }
     else
     {
@@ -716,12 +714,20 @@ function UpgradePiece()
 
 function UpgradeChecker()
 {
-    //Goes through all the friendly pieces and adds all that is the same type as the upgrade choice to upgradeStorage
-    for(var uI = 0; uI < friendlyPieces.length; uI++)
+    if(isWhiteTurn)
     {
-        if(friendlyPieces[uI].includes(upgradeToPiece))
+        upgradeFriendlyPieces = upgradeWhitePieces;
+    }
+    else
+    {
+        upgradeFriendlyPieces = upgradeBlackPieces;
+    }
+    //Goes through all the friendly pieces and adds all that is the same type as the upgrade choice to upgradeStorage
+    for(var uI = 0; uI < upgradeFriendlyPieces.length; uI++)
+    {
+        if(upgradeFriendlyPieces[uI].includes(upgradeToPiece))
         {
-            upgradeStorage.push(friendlyPieces[uI]);
+            upgradeStorage.push(upgradeFriendlyPieces[uI]);
         }
     }
 
