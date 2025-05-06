@@ -504,26 +504,23 @@ function CastlingChecker()
         if(unmovedCastling.includes("ki") && unmovedCastling.includes("r1"))
         {
             //Checks if castling is possible with the pieces above
-            if(chessBoard[whiteKi-1] === "[]" && chessBoard[whiteKi-2] === "[]" && chessBoard[whiteKi-3] === "[]" && chessBoard[whiteKi-4] === "r1")
+            if(chessBoard[whiteKi-1] === "[]" && chessBoard[whiteKi-2] === "[]" && chessBoard[whiteKi-3] === "[]" && chessBoard[whiteKi-4] === "r1" && !checkSquares.includes(squareNames[whiteKi-1]) && 
+            !checkSquares.includes(squareNames[whiteKi-2]) && !checkSquares.includes(squareNames[whiteKi-3]) && !checkSquares.includes(squareNames[whiteKi-4]))
             {
-                if(!checkSquares.includes(squareNames[whiteKi-1]) && !checkSquares.includes(squareNames[whiteKi-2]) && !checkSquares.includes(squareNames[whiteKi-3]) && !checkSquares.includes(squareNames[whiteKi-4]))
-                {
-                    isCastlingWr1 = true;
-                    legalMoves.push("Castling");
-                }
+                isCastlingWr1 = true;
+                //So legalMoves isn't empty this gets pushed
+                legalMoves.push("Castling");
             }
         }
 
         if(unmovedCastling.includes("ki") && unmovedCastling.includes("r2"))
         {
             //Checks if castling is possible with the pieces above
-            if(chessBoard[whiteKi+1] === "[]" && chessBoard[whiteKi+2] === "[]" && chessBoard[whiteKi+3] === "r2")
+            if(chessBoard[whiteKi+1] === "[]" && chessBoard[whiteKi+2] === "[]" && chessBoard[whiteKi+3] === "r2" && !checkSquares.includes(squareNames[whiteKi+1]) && 
+            !checkSquares.includes(squareNames[whiteKi+2]) && !checkSquares.includes(squareNames[whiteKi+3]))
             {
-                if(!checkSquares.includes(squareNames[whiteKi+1]) && !checkSquares.includes(squareNames[whiteKi+2]) && !checkSquares.includes(squareNames[whiteKi+3]))
-                {
-                    isCastlingWr2 = true;
-                    legalMoves.push("Castling");
-                }
+                isCastlingWr2 = true;
+                legalMoves.push("Castling");
             }
         }        
     }
@@ -533,26 +530,22 @@ function CastlingChecker()
         if(unmovedCastling.includes("KI") && unmovedCastling.includes("R1"))
         {
             //Checks if castling is possible with the pieces above
-            if(chessBoard[blackKi-1] === "[]" && chessBoard[blackKi-2] === "[]" && chessBoard[blackKi-3] === "[]" && chessBoard[blackKi-4] === "R1")
+            if(chessBoard[blackKi-1] === "[]" && chessBoard[blackKi-2] === "[]" && chessBoard[blackKi-3] === "[]" && chessBoard[blackKi-4] === "R1" && !checkSquares.includes(squareNames[blackKi-1]) && 
+            !checkSquares.includes(squareNames[blackKi-2]) && !checkSquares.includes(squareNames[blackKi-3]) && !checkSquares.includes(squareNames[blackKi-4]))
             {
-                if(!checkSquares.includes(squareNames[blackKi-1]) && !checkSquares.includes(squareNames[blackKi-2]) && !checkSquares.includes(squareNames[blackKi-3]) && !checkSquares.includes(squareNames[blackKi-4]))
-                {
-                    isCastlingBr1 = true;
-                    legalMoves.push("Castling");
-                }
+                isCastlingBr1 = true;
+                legalMoves.push("Castling");
             }
         }
 
         if(unmovedCastling.includes("KI") && unmovedCastling.includes("R2"))
         {
             //Checks if castling is possible with the pieces above
-            if(chessBoard[blackKi+1] === "[]" && chessBoard[blackKi+2] === "[]" && chessBoard[blackKi+3] === "R2")
+            if(chessBoard[blackKi+1] === "[]" && chessBoard[blackKi+2] === "[]" && chessBoard[blackKi+3] === "R2" && 
+            !checkSquares.includes(squareNames[blackKi+1]) && !checkSquares.includes(squareNames[blackKi+2]) && !checkSquares.includes(squareNames[blackKi+3]))
             {
-                if(!checkSquares.includes(squareNames[blackKi+1]) && !checkSquares.includes(squareNames[blackKi+2]) && !checkSquares.includes(squareNames[blackKi+3]))
-                {
-                    isCastlingBr2 = true;
-                    legalMoves.push("Castling");
-                }
+                isCastlingBr2 = true;
+                legalMoves.push("Castling");
             }
         }   
     }
