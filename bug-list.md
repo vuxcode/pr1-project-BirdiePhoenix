@@ -34,3 +34,7 @@
     Solution: I created the wouldBeCheck variable so that the isCheck wasn't turned false when it shouldn't be
 18. Problem: The next player was asked for castling when previously player pressed no on the question
     Solution: Added so all isCastling... is being turned false in PieceInput() since the correct ones is turned false in CheckingForCastling() in TurnOrder()
+19. Problem: When upgrading a pawn to a piece where number 1 had been taken it became number 2 so there was two number 2.
+    Solution: Added two arrays that also stores the different pieces since the poeces in blackPieces and whitePieces gets removed when taken
+20. Problem: If a pawn took a piece behind an enemy pawn the enemy pawn disapeard
+    Solution: Added so enPassantSquare = "" in EndTurn().
