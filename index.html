@@ -208,7 +208,8 @@ function TurnOrder()
     restartButton.style.display = "none";
     squareButton.style.display = "none";
     upgradeButton.style.display = "none";
-    console.log(isCheck);
+    //This is used when someone has won the game and the restart button is being pressed
+    //PrintBoard() prints chessBoard which has been reseted inside GameOver()
     if(isMate)
     {
         PrintBoard();
@@ -228,7 +229,7 @@ function TurnOrder()
     }
 
     //If it is not the first turn, and the piece the enemy moved was a pawn,
-    //EnPassantFunction() is being runned
+    //EnPassantFunction() is being runned here so pieceIndex has been declared
     if(startGame)
     {
         if(chosenPiece.includes("p") || chosenPiece.includes("P"))
@@ -241,7 +242,11 @@ function TurnOrder()
         startGame = true;
     }
     
+    //Checks if a player can perform a castling move
     CastlingChecker();
+    //Checks if the player is in check or not
+    //isCheckingForCheck is used so the program knows if it should check if a player is in check
+    //or if a player would be in check if a piece is moved
     isCheckingForCheck = true;
     EnemyCheckChecker();
     isCheckingForCheck = false;
@@ -282,6 +287,7 @@ function TurnOrder()
     }
 }
 
+//Checks if a player is in check or not and updates infoText1 accordingly
 function PlayerTurn()
 {
     if(isCheck)
@@ -308,34 +314,22 @@ function PlayerTurn()
         }  
     }
 
-    if(isWhiteTurn)
+    //Checks if any of the castling pieces can perform a castling and goes to either
+    //CastlingRequest() or PieceInput()
+    if(isCastlingWr1 === true || isCastlingWr2 === true || isCastlingBr1 === true || isCastlingBr2 === true)
     {
-        if(isCastlingWr1 === true || isCastlingWr2 === true)
-        {
-            CastlingRequest();
-        } 
-        else
-        {
-            PieceInput();
-        }
-    }
+        CastlingRequest();
+    } 
     else
     {
-        if(isCastlingBr1 === true || isCastlingBr2 === true)
-        {
-            CastlingRequest();
-        }
-        else
-        {
-            PieceInput();
-        }
+        PieceInput();
     }
 }
 
-    //CONTINUE EXPLAINING HERE!!!
+    //PIECE CHOICE FUNCTIONS//
+//Asks the player what piece they want to move
 function PieceInput()
 {
-    //Updates the chosenPiece variable depending on the players answer.
     infoText2.innerHTML = "What piece do you want to move?";
     
     castlingYesButton.style.display = "none";
@@ -343,6 +337,7 @@ function PieceInput()
     pieceButton.style.display = "block";
     output.style.display = "block";
 
+    //Turns all isCastling variables to false, incase the player chooses no on the question to castling
     isCastlingWr1 = false;
     isCastlingWr2 = false;
     isCastlingBr1 = false;
@@ -352,7 +347,7 @@ function PieceInput()
 function PieceChooser()
 {
     chosenPiece = output.value;
-    //Depending on what players turn it is, the program goes to different functions.
+    //Depending on what players turn it is, the program makes chosenPiece into lower or upper case
     if(isWhiteTurn)
     {
         chosenPiece = chosenPiece.toLowerCase();
@@ -361,8 +356,16 @@ function PieceChooser()
     {
         chosenPiece = chosenPiece.toUpperCase();
     } 
-
-    MovementManager();
+    //If the player chooses a piece that is not part of friendlyPieces (blackPieces/whitePieces)
+    //the program goes to InvalidPieces() otherwise MovementManager()
+    if(!friendlyPieces.includes(chosenPiece))
+    {  
+        InvalidPiece();
+    }
+    else
+    {
+        MovementManager();
+    }
 }
 
 function InvalidPiece()
@@ -370,6 +373,7 @@ function InvalidPiece()
     infoText2.innerHTML = "That is not a valid piece!";
 }
 
+//If the player chooses a piece that cannot be moved infoText1 is being updated, else it continues to SquareInput()
 function NoLegalMoves()
 {
     if(legalMoves.length === 0)
@@ -382,6 +386,7 @@ function NoLegalMoves()
     } 
 }
 
+//Asks the player what square they want to move the chosen piece
 function SquareInput()
 {
     pieceButton.style.display = "none";
@@ -396,9 +401,10 @@ function SquareChooser()
     chosenSquare = output.value;
     chosenSquare = chosenSquare.toUpperCase();
 
-    //If the move is legal, the board will update.
+    //If the move is legal, the board will update. Else it will go to InvalidSquare()
     if(legalMoves.includes(chosenSquare))
     {
+        //Goes to RemovePieces to see if an enemy piece was taken
         RemovePieces();
         //Gets the indexes of the chosen piece and square so we can change those places in the chessBoard array. 
         pieceIndex = chessBoard.indexOf(chosenPiece);
@@ -408,6 +414,7 @@ function SquareChooser()
         checkStorage[pieceIndex] = "[]";
         checkStorage[squareIndex] = chosenPiece;
 
+        //If a player has performed en passant, this removes the enemy piece that was taken
         if(chosenSquare === enPassantSquare)
         {
             if(isWhiteTurn)
@@ -420,7 +427,9 @@ function SquareChooser()
             }
         }
 
+        //Prints the board before going to CheckForUpgrade to enhance the visual experience
         PrintBoard();
+        //The CheckForUpgrade function checks if the piece should be upgraded
         CheckForUpgrade();
     }
     else
@@ -436,9 +445,7 @@ function InvalidSquare()
 
 function EndTurn()
 {
-    //The CheckForUpgrade function checks if the piece should be upgraded
-
-    //Checks if the moved pawn is in the unmovedPawns array and if it is it gets removed
+    //Checks if a moved pawn is in the unmovedPawns array and if it is, it gets removed
     if(unmovedPawns.includes(chosenPiece))
     {
         //Removes the chosen pawn from the unmovedPawns array.
@@ -457,13 +464,16 @@ function EndTurn()
     {
         isWhiteTurn = true;
     }
+    //Resets wouldBeCheck so no bugs appear during the next players turn
     wouldBeCheck = false;
 
+    //Hides the castling buttons, then update the board, then back to TurnOrder()
     HideCastlingButtons();
     PrintBoard();
     TurnOrder();
 }
 
+//If an enemy piece was taken that piece is removed from enemyPieces (blackPieces/whitePieces)
 function RemovePieces()
 {
     var removePiece = chessBoard[squareNames.indexOf(chosenSquare)];
@@ -477,15 +487,17 @@ function RemovePieces()
     //CASTLING FUNCTIONS//
 function CastlingChecker()
 {
+    //Runs EnemyCheckChecker to see if the king would be in check on one of the squares involved in the castling move
     EnemyCheckChecker();
     if(isWhiteTurn)
     {
         var whiteKi = chessBoard.indexOf("ki");
         if(unmovedCastling.includes("ki") && unmovedCastling.includes("r1"))
         {
+            //Checks if castling is possible with the pieces above
             if(chessBoard[whiteKi-1] === "[]" && chessBoard[whiteKi-2] === "[]" && chessBoard[whiteKi-3] === "[]" && chessBoard[whiteKi-4] === "r1")
             {
-                if(!checkSquares.includes(squareNames[whiteKi-1]) && !checkSquares.includes(squareNames[whiteKi-2]))
+                if(!checkSquares.includes(squareNames[whiteKi-1]) && !checkSquares.includes(squareNames[whiteKi-2]) && !checkSquares.includes(squareNames[whiteKi-3]) && !checkSquares.includes(squareNames[whiteKi-4]))
                 {
                     isCastlingWr1 = true;
                     legalMoves.push("Castling");
@@ -495,9 +507,10 @@ function CastlingChecker()
 
         if(unmovedCastling.includes("ki") && unmovedCastling.includes("r2"))
         {
+            //Checks if castling is possible with the pieces above
             if(chessBoard[whiteKi+1] === "[]" && chessBoard[whiteKi+2] === "[]" && chessBoard[whiteKi+3] === "r2")
             {
-                if(!checkSquares.includes(squareNames[whiteKi+1]) && !checkSquares.includes(squareNames[whiteKi+2]))
+                if(!checkSquares.includes(squareNames[whiteKi+1]) && !checkSquares.includes(squareNames[whiteKi+2]) && !checkSquares.includes(squareNames[whiteKi+3]))
                 {
                     isCastlingWr2 = true;
                     legalMoves.push("Castling");
@@ -510,9 +523,10 @@ function CastlingChecker()
         var blackKi = chessBoard.indexOf("KI");
         if(unmovedCastling.includes("KI") && unmovedCastling.includes("R1"))
         {
+            //Checks if castling is possible with the pieces above
             if(chessBoard[blackKi-1] === "[]" && chessBoard[blackKi-2] === "[]" && chessBoard[blackKi-3] === "[]" && chessBoard[blackKi-4] === "R1")
             {
-                if(!checkSquares.includes(squareNames[blackKi-1]) && !checkSquares.includes(squareNames[blackKi-2]))
+                if(!checkSquares.includes(squareNames[blackKi-1]) && !checkSquares.includes(squareNames[blackKi-2]) && !checkSquares.includes(squareNames[blackKi-3]) && !checkSquares.includes(squareNames[blackKi-4]))
                 {
                     isCastlingBr1 = true;
                     legalMoves.push("Castling");
@@ -522,9 +536,10 @@ function CastlingChecker()
 
         if(unmovedCastling.includes("KI") && unmovedCastling.includes("R2"))
         {
+            //Checks if castling is possible with the pieces above
             if(chessBoard[blackKi+1] === "[]" && chessBoard[blackKi+2] === "[]" && chessBoard[blackKi+3] === "R2")
             {
-                if(!checkSquares.includes(squareNames[blackKi+1]) && !checkSquares.includes(squareNames[blackKi+2]))
+                if(!checkSquares.includes(squareNames[blackKi+1]) && !checkSquares.includes(squareNames[blackKi+2]) && !checkSquares.includes(squareNames[blackKi+3]))
                 {
                     isCastlingBr2 = true;
                     legalMoves.push("Castling");
@@ -534,6 +549,7 @@ function CastlingChecker()
     }
 }
 
+//Asks the player if they want to perform a castling move
 function CastlingRequest()
 {
     //Updates the chosenPiece variable depending on the players answer.
@@ -544,6 +560,7 @@ function CastlingRequest()
     castlingNoButton.style.display = "block";
 }
 
+//If the player presses yes the program will show the relevant buttons
 function CastlingButtons()
 {
     castlingYesButton.style.display = "none";
@@ -574,6 +591,7 @@ function CastlingButtons()
     }
 }
 
+//These 4 functions updates the board when performing caslting
 function Wr1Castling()
 {
     chessBoard[60] = "[]";
@@ -626,6 +644,7 @@ function Br2Castling()
     EndTurn();
 }
 
+//Hides the castling buttons
 function HideCastlingButtons()
 {
     castlingWr1Button.style.display = "none";
@@ -635,7 +654,7 @@ function HideCastlingButtons()
 }
 
     //UPGRADE FUNCTIONS//
-//This function upgrades the pawns into a queen when reaching the end of the board
+//This function upgrades the pawns into the chosen piece when reaching the end of the board
 function CheckForUpgrade()
 {
     //Checks if the chosenPiece includes p or P
@@ -659,10 +678,12 @@ function CheckForUpgrade()
     }
 }
 
+//If an upgrade can be made, this function is being runned when the player presses the upgradeButton
 function UpgradePiece()
 {
     upgradeToPiece = output.value;
 
+    //If the player write something that is not included in upgradePieces InvalidPiece() is runned
     if(!upgradePieces.includes(upgradeToPiece))
     {
         InvalidPiece();
@@ -679,9 +700,11 @@ function UpgradePiece()
             upgradeToPiece = upgradeToPiece.toUpperCase(); 
         } 
 
+        //Runs UpgradeChecker() to see what number to put after the upgraded piece
         UpgradeChecker();
         chessBoard[chessBoard.indexOf(chosenPiece)] = upgradeToPiece;
         friendlyPieces.push(upgradeToPiece);
+        friendlyPieces.splice(friendlyPieces.indexOf(chosenPiece), 1);
 
         EndTurn();
     }
@@ -689,6 +712,7 @@ function UpgradePiece()
 
 function UpgradeChecker()
 {
+    //Goes through all the friendly pieces and adds all that is the same type as the upgrade choice to upgradeStorage
     for(var uI = 0; uI < friendlyPieces.length; uI++)
     {
         if(friendlyPieces[uI].includes(upgradeToPiece))
@@ -697,10 +721,11 @@ function UpgradeChecker()
         }
     }
 
+    //The length of upgradeStorage + 1 is added as the number after the upgraded piece
     upgradeToPiece = upgradeToPiece + (upgradeStorage.length + 1);
     upgradeStorage.splice(0);
 }
-
+//FORTSÄTT KOMMENTERA HÄR
     //EN PASSANT FUNCTIONS//
 function EnPassantFunction()
 {
