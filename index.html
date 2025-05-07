@@ -142,8 +142,6 @@ var chosenSquare;
 var pieceIndex;
 //Variable for the index of where the chosenPiece is being moved
 var squareIndex;
-//A variable for when calculating if en passant is possible
-var ePIndex;
 //Variables to determine what color is friendly and enemy
 var enemyPieces;
 var friendlyPieces;
@@ -477,7 +475,6 @@ function EndTurn()
     }
     //Resets wouldBeCheck so no bugs appear during the next players turn
     wouldBeCheck = false;
-    enPassantSquare = "";
 
     //Hides the castling buttons, then update the board, then back to TurnOrder()
     HideCastlingButtons();
@@ -733,12 +730,14 @@ function UpgradeChecker()
     upgradeToPiece = upgradeToPiece + (upgradeStorage.length + 1);
     upgradeStorage.splice(0);
 }
-//FORTSÄTT KOMMENTERA HÄR
+
     //EN PASSANT FUNCTIONS//
 //This is called in TurnOrder to see if the last player moved a pawn two steps
 //If that pawn ended next to an enemy pawn the enPassantSquare is being pushed into legalmoves
 function EnPassantFunction()
 {
+    //A variable for when calculating if en passant is possible
+    var ePIndex;
     if(isWhiteTurn)
     {
         //Checks if the white player moved the pawn two steps past the enPassantSquare
@@ -788,6 +787,7 @@ function ResetEnPassant()
 {
     legalMoves.splice(0); 
     enPassantPieces.splice(0);
+    enPassantSquare = "";
 }
 
     //MOVEMENT FUNCTIONS//
