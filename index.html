@@ -480,7 +480,7 @@ function EndTurn()
     enPassantSquare = "";
 
     //Hides the castling buttons, then update the board, then back to TurnOrder()
-    HideShowCastlingButtons();
+    HideCastlingButtons();
     PrintBoard();
     TurnOrder();
 }
@@ -652,7 +652,7 @@ function Br2Castling()
 }
 
 //Hides the castling buttons
-function HideShowCastlingButtons()
+function HideCastlingButtons()
 {
     castlingWr1Button.style.display = "none";
     castlingWr2Button.style.display = "none";
