@@ -290,8 +290,10 @@ For example:
 - 2025-05-09 Worked for 4 hours
   - Got the check functions to work in 2d
   - Started to convert the castling functions to work in 2d, it didn't work
-- 2025-05-10 Worked for 1.5 hours
+- 2025-05-10 Worked for 7.5 hours
   - Got the castling functions to work in 2d
+  - Got everything to work in 2d
+  - Reorginized the script
         
 
        
