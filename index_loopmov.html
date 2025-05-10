@@ -1,0 +1,1883 @@
+<meta name="color-scheme" content="dark">
+
+<style> * {font-family: monospace;}</style>
+<h1>CHESS</h1>
+<h2 id="info1">Welcome to Chess. White is lowercase and black is uppercase. <br></h2>
+<h3 id="squareNames"><br></h3>
+<h3 id="info2">Press to start the game</h3>
+<input id="output" type="text"> <br>
+<button id="startButton">Start Game</button>
+<button id="restartButton">Restart Game</button>
+<button id="pieceButton">Confirm Piece</button>
+<button id="squareButton">Confirm Square</button>
+<button id="upgradeButton">Confirm Choice</button>
+<button id="castlingYesButton">Yes</button>
+<button id="castlingNoButton">No</button>
+<button id="castlingWr1Button">r1</button>
+<button id="castlingWr2Button">r2</button>
+<button id="castlingBr1Button">R1</button>
+<button id="castlingBr2Button">R2</button>
+
+<script>
+    //HTML-ELEMENTS//
+//This button starts the game
+var startButton = document.getElementById("startButton");
+startButton.addEventListener("click", TurnOrder);
+//This button restarts the game when a game is over
+var restartButton = document.getElementById("restartButton");
+restartButton.addEventListener("click", TurnOrder);
+restartButton.style.display = "none";
+//This button confirms the piece choice
+var pieceButton = document.getElementById("pieceButton");
+pieceButton.addEventListener("click", PieceChooser); 
+pieceButton.style.display = "none";
+//This button confirms the square choice.
+var squareButton = document.getElementById("squareButton");
+squareButton.addEventListener("click", SquareChooser);
+squareButton.style.display = "none";
+//This button confirms the upgrade choice
+var upgradeButton = document.getElementById("upgradeButton");
+upgradeButton.addEventListener("click", UpgradePiece);
+upgradeButton.style.display = "none";
+//These buttons controls the castling outputs
+var castlingYesButton = document.getElementById("castlingYesButton");
+castlingYesButton.addEventListener("click", ShowCastlingButtons);
+castlingYesButton.style.display = "none";
+var castlingNoButton = document.getElementById("castlingNoButton");
+castlingNoButton.addEventListener("click", PieceInput);
+castlingNoButton.style.display = "none";
+var castlingWr1Button = document.getElementById("castlingWr1Button");
+castlingWr1Button.addEventListener("click", Wr1Castling);
+castlingWr1Button.style.display = "none";
+var castlingWr2Button = document.getElementById("castlingWr2Button");
+castlingWr2Button.addEventListener("click", Wr2Castling);
+castlingWr2Button.style.display = "none";
+var castlingBr1Button = document.getElementById("castlingBr1Button");
+castlingBr1Button.addEventListener("click", Br1Castling);
+castlingBr1Button.style.display = "none";
+var castlingBr2Button = document.getElementById("castlingBr2Button");
+castlingBr2Button.style.display = "none";
+castlingBr2Button.addEventListener("click", Br2Castling);
+
+
+//Gives information about what players turn it is and what color is upper- and lowercase. 
+//Also alerts the player about check and mate
+var infoText1 = document.getElementById("info1");
+//Gives information about what the players should write in the text box and if the player writes an invalid input
+var infoText2 = document.getElementById("info2");
+
+//A textbox where the players can write what piece they want to move and where they want to move it
+var output = document.getElementById("output");
+output.style.display = "none";
+
+    //ARRAYS//
+//Stores the opening board. Capital letter stands for black and lowercase stands for white. [] is an empty square.
+var chessBoard = [
+    ["R1", "N1", "B1", "Q1", "KI", "B2", "N2", "R2"],
+    ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"],
+    ["[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"],
+    ["[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"],
+    ["[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"],
+    ["[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"],
+    ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"],
+    ["r1", "n1", "b1", "q1", "ki", "b2", "n2", "r2"]
+]; 
+
+//Stores the name of the squares.
+var squareNames = [
+    ["A8", "B8" ,"C8", "D8", "E8", "F8", "G8", "H8"],
+    ["A7", "B7" ,"C7", "D7", "E7", "F7", "G7", "H7"],
+    ["A6", "B6" ,"C6", "D6", "E6", "F6", "G6", "H6"],
+    ["A5", "B5" ,"C5", "D5", "E5", "F5", "G5", "H5"],
+    ["A4", "B4" ,"C4", "D4", "E4", "F4", "G4", "H4"],
+    ["A3", "B3" ,"C3", "D3", "E3", "F3", "G3", "H3"],
+    ["A2", "B2" ,"C2", "D2", "E2", "F2", "G2", "H2"],
+    ["A1", "B1" ,"C1", "D1", "E1", "F1", "G1", "H1"]
+]; 
+
+//Is used when checking for check.
+//For every possible enemy move, the array is updated accordingly and then reseted to be the same as chessBoard
+var checkStorage = [
+    ["R1", "N1", "B1", "Q1", "KI", "B2", "N2", "R2"],
+    ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"],
+    ["[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"],
+    ["[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"],
+    ["[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"],
+    ["[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"],
+    ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"],
+    ["r1", "n1", "b1", "q1", "ki", "b2", "n2", "r2"]
+];
+
+//Stores all unmoved pawns, so the program knows which ones that can move 2 squares.
+var unmovedPawns = ["p1", "p2", "p3", "p4", "p5","p6", "p7", "p8", "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"];
+//Stores the unmoved kings and rooks, so the program knows which ones that can perform the castling mechanic
+var unmovedCastling = ["ki", "r1", "r2", "KI", "R1", "R2"];
+var knightSquares = [];
+
+//Stores all the white and black pieces.
+//Is used with the enemyPieces and friendlyPieces variables, for the program to know what the enemy and friendly pieces are
+//When a piece is taken it gets removed from its array.
+var whitePieces = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "r1", "r2", "b1", "b2", "n1", "n2", "q1", "ki"];
+var blackPieces = ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "R1", "R2", "B1", "B2", "N1", "N2", "Q1", "KI"];
+
+//Stores all the pieces which the pawns can be upgraded to
+var upgradePieces = ["r", "b", "n", "q","R", "B", "N", "Q"];
+//Is used when calculating what number to add after the upgraded piece
+var upgradeStorage = [];
+//These arrays is the same as whitePieces and blackPieces but never changes to work with the upgrade mechanics
+var upgradeWhitePieces = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "r1", "r2", "b1", "b2", "n1", "n2", "q1", "ki"];
+var upgradeBlackPieces = ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "R1", "R2", "B1", "B2", "N1", "N2", "Q1", "KI"];
+
+//Stores what pawns that can make en passant
+var enPassantPieces = [];
+//Stores all the squares which a piece can move to
+var legalMoves = [];
+//Stores the squares where the king would be in check
+var checkSquares = [];
+
+    //VARIABLES//
+//Variables for the chosen piece and square to move to.
+var chosenPiece;
+var chosenSquare;
+//Variable for the index of where the chosenPiece were
+var pieceIndex;
+//Variable for the index of where the chosenPiece is being moved
+var squareIndex;
+//Variables to determine what color is friendly and enemy
+var enemyPieces;
+var friendlyPieces;
+//Is used when upgrading. Is either upgradeWhitePieces or upgradeBlackPieces
+var upgradeFriendlyPieces;
+//Is used when calculating check. Instead of chosenPiece
+var kingSlayer;
+//This variable makes sure that the EnPassant functions is not runned at the start of the game, when chosenPiece is not declared
+var startGame = false;
+//Is used when getting the index from chessBoard
+//It will be = to chessBoard[index]
+var subChessBoard;
+//These variables is used when gettin the index of chosenPiece
+var cPi;
+var cPj;
+//These variables is used when getting the index of chosenSquare
+var cSi;
+var cSj;
+
+//These 5 variables is used when checking for check
+//Gets the index of the king
+var cKi;
+var cKj;
+//Get
+var cCi;
+var cCj;
+//Is either = to ki or KI depending on what players turn it is
+var kingPiece;
+//Depending on if looking if a plyer IS in check or  WOULD BE in check
+//this will be declared isCheck or wouldBeCheck
+var checkVar;
+//Depending on what players turn it is these will be declared accordingly
+var queenCheck;
+var rookCheck;
+var bishopCheck;
+var knightCheck;
+
+    //SPECIAL MOVES VARIABLES//
+//These variables are used when checking what rooks can perform castling
+var isCastlingWr1 = false;
+var isCastlingWr2 = false;
+var isCastlingBr1 = false;
+var isCastlingBr2 = false;
+//This is used when checking for check when checking if castling is possible
+var castlingSteps;
+var rKi; //(rook king index)
+var rKj;
+
+//A variable that stores what square a pawn is moved to when performing an en passant
+var enPassantSquare;
+//A variable that decides what piece a pawn is being upgraded to
+var upgradeToPiece;
+
+    //TURN ORDER & CHECK VARIABLES//
+//Checks which players turn it is.
+var isWhiteTurn = true; 
+//Decides if a player are in check
+var isCheck = false;
+var isCheckingForCheck = false;
+var wouldBeCheck = false;
+//Decides if a player are mate and looses the game
+var isMate = false;
+//Is used when checking for mate. 
+//Makes sure so the NoLegalMoves function is not runned when going through the MovementManager
+var checkingForMate = false;
+
+//Prints the board so it is visible befor the game starts
+PrintBoard();
+
+//This function is what prints the board.
+function PrintBoard()
+{
+    //Stores the squareNames HTML-text into a variable so it can be updated
+    var updateBoard = document.getElementById("squareNames");
+    //Clears the squareNames HTML-text so that there is not multible boards printed
+    updateBoard.innerHTML = " ";   
+    //Updates the squareNames HTML-text to be the same as the chessBoard array
+    for(var i = 0; i < chessBoard.length; i++)
+    { 
+        //Creates a variable of the inner arrays
+        var subChessBoard = chessBoard[i];
+        for(var j = 0; j < subChessBoard.length; j++)
+        {
+            var updateBoard = document.getElementById("squareNames");
+            updateBoard.innerHTML += subChessBoard[j] + " ";
+        }
+
+        updateBoard.innerHTML += "<br>";
+    }
+}
+
+//This function controls the actual turns.
+function TurnOrder()
+{
+    //Hides the following buttons
+    startButton.style.display = "none";
+    restartButton.style.display = "none";
+    squareButton.style.display = "none";
+    upgradeButton.style.display = "none";
+    //This is used when someone has won the game and the restart button is being pressed
+    //PrintBoard() prints chessBoard which has been reseted inside GameOver()
+    if(isMate)
+    {
+        PrintBoard();
+        isMate = false;
+    }
+    isCheck = false;
+
+    //Declares enemyPieces and friendlyPieces depending on what players turn it is
+    if(isWhiteTurn)
+    {
+        enemyPieces = blackPieces;
+        friendlyPieces = whitePieces;
+        kingPiece = "ki";
+        queenCheck = "Q";
+        rookCheck = "R";
+        bishopCheck = "B";
+        knightCheck = "N";
+    }
+    else
+    {
+        enemyPieces = whitePieces;
+        friendlyPieces = blackPieces;
+        kingPiece = "KI";
+        queenCheck = "q";
+        rookCheck = "r";
+        bishopCheck = "b";
+        knightCheck = "n";
+    }
+
+    //If it is not the first turn, and the piece the enemy moved was a pawn,
+    //EnPassantFunction() is being runned here so pieceIndex has been declared
+    if(startGame)
+    {
+        if(chosenPiece.includes("p") || chosenPiece.includes("P"))
+        {
+            //EnPassantFunction();
+        }
+        //Checks if the player is in check or not
+        //isCheckingForCheck is used so the program knows if it should check if a player IS in check
+        //or if a player WOULD BE in check if a piece is moved
+        isCheckingForCheck = true;
+        EnemyCheckChecker();
+        isCheckingForCheck = false;
+
+        if(!isCheck)
+        {
+            //Checks if a player can perform a castling move
+            CastlingChecker();
+        }
+    }
+    else
+    {
+        startGame = true;
+    }
+
+    //Checks if a player are in check or mate and updates infoText1 accordingly
+    if(isCheck)
+    {
+        MateChecker();
+        if(isWhiteTurn)
+        {
+            if(isMate)
+            {
+                infoText1.innerHTML = "Checkmate! Black wins!"; 
+                GameOver();  
+            }
+            else
+            {
+                PlayerTurn();
+            }
+        }
+        else
+        {
+            if(isMate)
+            {
+                infoText1.innerHTML = "Checkmate! White wins!"; 
+                GameOver();  
+            }
+            else
+            {
+                PlayerTurn();
+            }
+        }    
+    }
+    else
+    {
+        PlayerTurn();
+    }
+}
+
+//Checks if a player is in check or not and updates infoText1 accordingly
+function PlayerTurn()
+{
+    if(isCheck)
+    {
+        if(isWhiteTurn)
+        {
+            infoText1.innerHTML = "White turn - Check!"; 
+        }
+        else
+        {
+            infoText1.innerHTML = "Black turn - Check!"; 
+        }
+    }
+    else
+    {
+        //Notifies which players turn it is.
+        if(isWhiteTurn)
+        {
+            infoText1.innerHTML = "White turn"; 
+        }
+        else
+        {
+            infoText1.innerHTML = "Black turn";
+        }  
+    }
+
+    //Checks if any of the castling pieces can perform a castling and goes to either
+    //CastlingRequest() or PieceInput()
+    if(isCastlingWr1 === true || isCastlingWr2 === true || isCastlingBr1 === true || isCastlingBr2 === true)
+    {
+        CastlingRequest();
+    } 
+    else
+    {
+        PieceInput();
+    }
+}
+
+    //PIECE CHOICE FUNCTIONS//
+//Asks the player what piece they want to move
+function PieceInput()
+{
+    infoText2.innerHTML = "What piece do you want to move?";
+    
+    castlingYesButton.style.display = "none";
+    castlingNoButton.style.display = "none";
+    pieceButton.style.display = "block";
+    output.style.display = "block";
+    //Clears the textbox
+    output.value = "";
+
+    //Turns all isCastling variables to false, incase the player chooses NO on the question to castling
+    isCastlingWr1 = false;
+    isCastlingWr2 = false;
+    isCastlingBr1 = false;
+    isCastlingBr2 = false;
+}
+
+function PieceChooser()
+{
+    chosenPiece = output.value;
+    //Depending on what players turn it is, the program makes chosenPiece into lower or upper case
+    if(isWhiteTurn)
+    {
+        chosenPiece = chosenPiece.toLowerCase();
+    }
+    else
+    {
+        chosenPiece = chosenPiece.toUpperCase();
+    } 
+    //If the player chooses a piece that is not part of friendlyPieces (blackPieces/whitePieces)
+    //the program goes to InvalidPieces() otherwise MovementManager()
+    if(!friendlyPieces.includes(chosenPiece))
+    {  
+        InvalidPiece();
+    }
+    else
+    {
+        MovementManager();
+    }
+}
+
+function InvalidPiece()
+{
+    infoText2.innerHTML = "That is not a valid piece!";
+}
+
+//If the player chooses a piece that cannot be moved infoText1 is being updated, else it continues to SquareInput()
+function NoLegalMoves()
+{
+    if(legalMoves.length === 0)
+    {
+        infoText2.innerHTML = "You can not move that piece this turn!";  
+    }
+    else
+    {
+        SquareInput();
+    } 
+}
+
+//Asks the player what square they want to move the chosen piece
+function SquareInput()
+{
+    pieceButton.style.display = "none";
+    squareButton.style.display = "block";
+    infoText2.innerHTML = "Where do you want to move the piece?";
+    //Clears the textbox
+    output.value = "";
+    console.log(legalMoves);
+}
+
+function IndexChosenSquare()
+{
+    for(cSi = 0; cSi < squareNames.length; cSi++)
+    {
+        var subSquareNames = squareNames[cSi];
+        for(cSj = 0; cSj < subSquareNames.length; cSj++)
+        {
+            if(subSquareNames[cSj] === chosenSquare)
+            {
+                return;
+            }
+        }
+    }
+}
+
+function SquareChooser()
+{
+    //Updates the chosenSquare variable depending on the players answer.
+    chosenSquare = output.value;
+    chosenSquare = chosenSquare.toUpperCase();
+
+    IndexChosenSquare();
+
+    //If the move is legal, the board will update. Else it will go to InvalidSquare()
+    if(legalMoves.includes(chosenSquare) && !checkSquares.includes(chosenSquare))
+    {
+        //Goes to RemovePieces to see if an enemy piece was taken
+        RemovePieces();
+        //Gets the indexes of the chosen piece and square so we can change those places in the chessBoard array. 
+        chessBoard[cPi][cPj] = "[]";
+        chessBoard[cSi][cSj] = chosenPiece;
+        checkStorage[cPi][cPj] = "[]";
+        checkStorage[cSi][cSj] = chosenPiece;
+
+        //If a player has performed en passant, this removes the enemy piece that was taken
+        if(chosenSquare === enPassantSquare)
+        {
+            console.log("EnPassant");
+            console.log(chosenSquare);
+            console.log(enPassantSquare);
+            if(isWhiteTurn && (cSj === cPj+1 || cSi === cPj-1) && chosenPiece.includes("p"))
+            {
+                chessBoard[cPi+1][cPj] = "[]";
+                console.log("Removing");
+            }
+            else if((cSj === cPj+1 || cSi === cPj-1) && chosenPiece.includes("P"))
+            {
+                chessBoard[cPi-1][cPj] = "[]";
+                console.log("Removing");
+            }
+        }
+
+        //Prints the board before going to CheckForUpgrade to enhance the visual experience
+        PrintBoard();
+        //The CheckForUpgrade function checks if the piece should be upgraded
+        CheckForUpgrade();
+    }
+    else
+    { 
+        InvalidSquare();
+    }
+}
+
+function InvalidSquare()
+{
+    infoText2.innerHTML = "That is not a valid move";
+}
+
+function EndTurn()
+{
+    //Checks if a moved pawn is in the unmovedPawns array and if it is, it gets removed
+    if(unmovedPawns.includes(chosenPiece))
+    {
+        //Removes the chosen pawn from the unmovedPawns array.
+        unmovedPawns.splice(unmovedPawns.indexOf(chosenPiece), 1);
+    }
+
+    //Resets the legalMoves properties.
+    legalMoves.splice(0); 
+
+    //Changes what players turn it is
+    if(isWhiteTurn)
+    {
+        isWhiteTurn = false;
+    }
+    else
+    {
+        isWhiteTurn = true;
+    }
+    //Resets wouldBeCheck so no bugs appear during the next players turn
+    wouldBeCheck = false;
+
+    //Hides the castling buttons, then update the board, then back to TurnOrder()
+    HideCastlingButtons();
+    PrintBoard();
+    ResetCheckStorage();
+    TurnOrder();
+}
+
+//If an enemy piece was taken that piece is removed from enemyPieces (blackPieces/whitePieces)
+function RemovePieces()
+{
+    var removePiece = chessBoard[cSi][cSj];
+    var removeIndex = enemyPieces.indexOf(removePiece);
+    if(enemyPieces.includes(removePiece))
+    {
+        enemyPieces.splice(removeIndex, 1);
+    }
+}
+
+function CastlingCheckChecker()
+{
+    IndexOfKing();
+    
+    //Runs EnemyCheckChecker to see if the king would be in check on one of the squares involved in the castling move
+    for(rKj; rKj <= castlingSteps; rKj++)
+    {
+        checkStorage[cKi][cKj] = "[]";
+        checkStorage[rKi][rKj] = kingPiece;
+        EnemyCheckChecker();
+    }
+    
+    ResetCheckStorage();
+}
+    //CASTLING FUNCTIONS//
+function CastlingChecker()
+{  
+    //Depending on which players turn it is, these castling variables gets declared accordingly
+    if(isWhiteTurn)
+    { 
+        var castlingKi = "ki";
+        var castlingR1 = "r1";
+        var castlingR2 = "r2";
+        rKi = 7;
+    }
+    else
+    {
+        var castlingKi = "KI";
+        var castlingR1 = "R1";
+        var castlingR2 = "R2";
+        rKi = 0;
+    }
+    
+    if(unmovedCastling.includes(castlingKi) && unmovedCastling.includes(castlingR1))
+    {
+        //Checks if castling is possible with r1/R1
+        if(chessBoard[rKi][3] === "[]" && chessBoard[rKi][2] === "[]" && chessBoard[rKi][1] === "[]")
+        {
+            rKj = 2;
+            castlingSteps = 3;
+            CastlingCheckChecker();
+            if(!wouldBeCheck)
+            {
+                if(isWhiteTurn)
+                {
+                    isCastlingWr1 = true;
+                }
+                else
+                {
+                    isCastlingBr1 = true;
+                }
+                //To be sure legalMoves isn't empty this gets pushed
+                legalMoves.push("Castling");
+            }
+            else
+            {
+                wouldBeCheck = false;
+            }
+        }
+    }
+    
+
+    if(unmovedCastling.includes(castlingKi) && unmovedCastling.includes(castlingR2))
+    {
+        //Checks if castling is possible with r2/R2
+        if(chessBoard[rKi][5] === "[]" && chessBoard[rKi][6] === "[]")
+        {
+            rKj = 5;
+            castlingSteps = 6;
+            CastlingCheckChecker();
+            if(!wouldBeCheck)
+            {
+                if(isWhiteTurn)
+                {
+                    isCastlingWr2 = true;
+                }
+                else
+                {
+                    isCastlingBr2 = true;
+                }
+                legalMoves.push("Castling");
+            }
+            else
+            {
+                wouldBeCheck = false;
+            }
+        }
+            
+    }        
+}
+
+//Asks the player if they want to perform a castling move
+function CastlingRequest()
+{
+    //Updates the chosenPiece variable depending on the players answer.
+    infoText2.innerHTML = "Do you want to Castling?";
+    pieceButton.style.display = "none";
+    output.style.display = "none";
+    castlingYesButton.style.display = "block";
+    castlingNoButton.style.display = "block";
+}
+
+//If the player presses yes the program will show the relevant buttons
+function ShowCastlingButtons()
+{
+    castlingYesButton.style.display = "none";
+    castlingNoButton.style.display = "none"; 
+
+    if(isCastlingWr1)
+    {
+        isCastlingWr1 = false;
+        castlingWr1Button.style.display = "block";
+    }
+
+    if(isCastlingWr2)
+    {
+        isCastlingWr2 = false;
+        castlingWr2Button.style.display = "block";
+    }
+
+    if(isCastlingBr1)
+    {
+        isCastlingBr1 = false;
+        castlingBr1Button.style.display = "block";
+    }
+
+    if(isCastlingBr2)
+    {
+        isCastlingBr2 = false;
+        castlingBr2Button.style.display = "block";
+    }
+}
+
+//These 4 functions updates the board when performing caslting
+function Wr1Castling()
+{
+    chessBoard[7][4] = "[]";
+    chessBoard[7][3] = "r1";
+    chessBoard[7][2] = "ki";
+    chessBoard[7][0] = "[]";
+
+    unmovedCastling.splice(unmovedCastling.indexOf("r1"), 1);
+    unmovedCastling.splice(unmovedCastling.indexOf("ki"), 1);
+
+    cPi = cKi;
+    cPj = cKj;
+
+    EndTurn();
+}
+
+function Wr2Castling()
+{
+    chessBoard[7][4] = "[]";
+    chessBoard[7][5] = "r2";
+    chessBoard[7][6] = "ki";
+    chessBoard[7][7] = "[]";
+
+    unmovedCastling.splice(unmovedCastling.indexOf("r2"), 1);
+    unmovedCastling.splice(unmovedCastling.indexOf("ki"), 1);
+
+    cPi = cKi;
+    cPj = cKj;
+
+    EndTurn();
+}
+
+function Br1Castling()
+{
+    chessBoard[0][4] = "[]";
+    chessBoard[0][3] = "R1";
+    chessBoard[0][2] = "KI";
+    chessBoard[0][0] = "[]";
+
+    unmovedCastling.splice(unmovedCastling.indexOf("R1"), 1);
+    unmovedCastling.splice(unmovedCastling.indexOf("KI"), 1);
+
+    cPi = cKi;
+    cPj = cKj;
+
+    EndTurn();
+}
+
+function Br2Castling()
+{
+    chessBoard[0][4] = "[]";
+    chessBoard[0][5] = "R1";
+    chessBoard[0][6] = "KI";
+    chessBoard[0][7] = "[]";
+
+    unmovedCastling.splice(unmovedCastling.indexOf("R2"), 1);
+    unmovedCastling.splice(unmovedCastling.indexOf("KI"), 1);
+
+    cPi = cKi;
+    cPj = cKj;
+
+    EndTurn();
+}
+
+//Hides the castling buttons
+function HideCastlingButtons()
+{
+    castlingWr1Button.style.display = "none";
+    castlingWr2Button.style.display = "none";
+    castlingBr1Button.style.display = "none";
+    castlingBr2Button.style.display = "none";
+}
+
+    //UPGRADE FUNCTIONS//
+//This function upgrades the pawns into the chosen piece when reaching the end of the board
+function CheckForUpgrade()
+{
+    //Checks if the chosenPiece includes p or P
+    //and if the pawn has reached the top row (index <= 7) or the bottom row (index >= 56)
+    if((chosenPiece.includes("p") || chosenPiece.includes("P")) && (cPi === 0 || cPi === 7))
+    {
+        upgradeButton.style.display = "block"; 
+        squareButton.style.display = "none";
+        infoText2.innerHTML = "What piece do you want to upgrade the pawn to?";    
+    }
+    else
+    {
+        EndTurn();
+    }
+}
+
+//If an upgrade can be made, this function is being runned when the player presses the upgradeButton
+function UpgradePiece()
+{
+    upgradeToPiece = output.value;
+
+    //If the player write something that is not included in upgradePieces InvalidPiece() is runned
+    if(!upgradePieces.includes(upgradeToPiece))
+    {
+        InvalidPiece();
+    }
+    else
+    {
+        //Checks if it is a white or a black piece
+        if(chosenPiece.includes("p"))
+        {
+            upgradeToPiece = upgradeToPiece.toLowerCase();  
+        } 
+        else if(chosenPiece.includes("P"))
+        {
+            upgradeToPiece = upgradeToPiece.toUpperCase(); 
+        } 
+
+        //Runs UpgradeChecker() to see what number to put after the upgraded piece
+        UpgradeChecker();
+        chessBoard[cPi][cPj] = upgradeToPiece;
+        friendlyPieces.push(upgradeToPiece);
+        friendlyPieces.splice(friendlyPieces.indexOf(chosenPiece), 1);
+
+        EndTurn();
+    }
+}
+
+function UpgradeChecker()
+{
+    if(isWhiteTurn)
+    {
+        upgradeFriendlyPieces = upgradeWhitePieces;
+    }
+    else
+    {
+        upgradeFriendlyPieces = upgradeBlackPieces;
+    }
+    //Goes through all the friendly pieces and adds all that is the same type as the upgrade choice to upgradeStorage
+    for(var uI = 0; uI < upgradeFriendlyPieces.length; uI++)
+    {
+        if(upgradeFriendlyPieces[uI].includes(upgradeToPiece))
+        {
+            upgradeStorage.push(upgradeFriendlyPieces[uI]);
+        }
+    }
+
+    //The length of upgradeStorage + 1 is added as the number after the upgraded piece
+    upgradeToPiece = upgradeToPiece + (upgradeStorage.length + 1);
+    upgradeStorage.splice(0);
+}
+
+    //EN PASSANT FUNCTIONS//
+//This is called in TurnOrder to see if the last player moved a pawn two steps
+//If that pawn ended next to an enemy pawn the enPassantSquare is being pushed into legalmoves
+function EnPassantFunction()
+{
+    //A variable for when calculating if en passant is possible
+    var ePIndex;
+    if(isWhiteTurn)
+    {
+        //Checks if the white player moved the pawn two steps past the enPassantSquare
+        //wich is declared in PawnMovement()
+        if(pieceIndex + 8 === squareNames[cPi-1][cPj])
+        {
+            //These checks if the last players pawn ended up next to a pawn of the current player
+            //piexeIndex is where the pawn was befor it moved
+            ePIndex = pieceIndex+17;
+            if(chessBoard[cPi][cPj].includes("p"))
+            { //Pushing the enpassantSquare into legal moves and the pawns that can perform en passant into enPassantPieces
+                legalMoves.push(enPassantSquare);
+                enPassantPieces.push(chessBoard[ePIndex]);
+            }
+            ePIndex = pieceIndex+15;
+            if(chessBoard[ePIndex].includes("p"))
+            {
+                legalMoves.push(enPassantSquare);
+                enPassantPieces.push(chessBoard[ePIndex]);
+            }
+        }
+    }
+    else
+    {
+        //Checks if the black player moved the pawn two steps past the enPassantSquare
+        //wich is declared in PawnMovement()
+        if(pieceIndex - 8 === squareNames.indexOf(enPassantSquare))
+        {
+            ePIndex = pieceIndex-17;
+            if(chessBoard[ePIndex].includes("P"))
+            {
+                legalMoves.push(enPassantSquare);
+                enPassantPieces.push(chessBoard[ePIndex]);
+            }
+            ePIndex = pieceIndex-15;
+            if(chessBoard[ePIndex].includes("P"))
+            {
+                legalMoves.push(enPassantSquare);
+                enPassantPieces.push(chessBoard[ePIndex]);
+            }
+        }
+    }
+}
+
+//A function that empties legalMoves and enPassantPieces if the player doesn't move an "en passant"-pawn
+function ResetEnPassant()
+{
+    legalMoves.splice(0); 
+    enPassantPieces.splice(0);
+    enPassantSquare = "";
+}
+
+    //MOVEMENT FUNCTIONS//
+//Depending on the players answer in PieceInput(), the program will go to the right function
+function MovementManager()
+{
+    if(chosenPiece.includes("p") || chosenPiece.includes("P") )
+    {
+        //When checking for mate, MovementManager() is being called but then ResetEnPassant() and NoLegalMoves() shouldn't be called
+        if(!checkingForMate)
+        {
+            //If the player moves a pawn that cannot perform en passant, ResetEnPassant() is being runned
+            if(!enPassantPieces.includes(chosenPiece))
+            {
+                ResetEnPassant(); 
+            }
+        }
+        PawnMovement(); 
+        if(!checkingForMate)
+        {
+            //This function checks if the chosen piece can move this turn
+            NoLegalMoves();       
+        }
+    }
+    else if(chosenPiece.includes("r") || chosenPiece.includes("R"))
+    {
+        if(!checkingForMate)
+        {  
+            ResetEnPassant();
+        }
+        RookMovement();
+        if(!checkingForMate)
+        {
+            NoLegalMoves();       
+        }
+    }
+    else if(chosenPiece.includes("n") || chosenPiece.includes("N"))
+    {
+        if(!checkingForMate)
+        {  
+            ResetEnPassant();
+        }
+        KnightMovement();
+        if(!checkingForMate)
+        {
+            NoLegalMoves();       
+        }
+    }
+    else if(chosenPiece.includes("b") || chosenPiece.includes("B"))
+    {
+        if(!checkingForMate)
+        {  
+            ResetEnPassant();
+        }
+        BishopMovement();
+        if(!checkingForMate)
+        {
+            NoLegalMoves();       
+        }
+    }
+    else if(chosenPiece.includes("k")|| chosenPiece.includes("K"))
+    {
+        if(!checkingForMate)
+        {  
+            ResetEnPassant();
+        }
+        KingMovement();
+        if(!checkingForMate)
+        {
+            NoLegalMoves();       
+        }
+    }
+    else if(chosenPiece.includes("q") || chosenPiece.includes("Q"))
+    {
+        if(!checkingForMate)
+        {  
+            ResetEnPassant();
+        }
+        QueenMovement();
+        if(!checkingForMate)
+        {
+            NoLegalMoves();       
+        }
+    }
+    else
+    {
+        InvalidPiece();
+    }
+}
+
+function IndexChosenPiece()
+{
+    for(cPi = 0; cPi < chessBoard.length; cPi++)
+    {
+        subChessBoard = chessBoard[cPi];
+        for(cPj = 0; cPj < subChessBoard.length; cPj++)
+        {
+            if(chessBoard[cPi][cPj] === chosenPiece)
+            {
+                return;
+            }
+        }
+    }
+}
+
+//Controls the pawn movement.
+//Depending on which players turn it is there will be a different equation.
+function PawnMovement()
+{
+    IndexChosenPiece();
+    //A variable that keeps track of the index of all the possible moves
+    //var IndexChosenPiece();
+    if(isWhiteTurn)
+    {
+        //This checks if the pawn can move one step
+        if(chessBoard[cPi-1][cPj] === "[]")
+        {
+            //Changes checkStorage and then calls EnemyCheckChecker() to check if the player would be in check if this move is done
+            checkStorage[cPi][cPj] = "[]";
+            checkStorage[cPi-1][cPj] = chosenPiece;
+            EnemyCheckChecker(); 
+
+            //If the player wouldn't be in check when doing the move, the square is pushed into legalMoves
+            if(!wouldBeCheck)
+            {
+                legalMoves.push(squareNames[cPi-1][cPj]);
+            }
+            else //Resets wouldBeCheck so it is false again when moving on to the next possible move
+            {
+                wouldBeCheck = false;
+            }   
+            //Resets checkStorge so it is the same as chessBoard again
+            ResetCheckStorage(); 
+        }
+        
+        //This checks if the pawn can move two steps
+        if(unmovedPawns.includes(chosenPiece) && chessBoard[cPi-2][cPj] === "[]" && chessBoard[cPi-1][cPj] === "[]")
+        {
+            checkStorage[cPi][cPj] = "[]";
+            checkStorage[cPi-2][cPj] = chosenPiece;
+            EnemyCheckChecker(); 
+
+            if(!wouldBeCheck)
+            {
+                legalMoves.push(squareNames[cPi-2][cPj]);
+                //If the pawn can move two steps, the enPassantSquare is declared here
+                //to be used later on the next players turn when checking if en passant is possible
+                enPassantSquare = squareNames[cPi-1][cPj];
+
+            }
+            else
+            {
+                wouldBeCheck = false;
+            }
+            ResetCheckStorage();
+        }
+
+        //Checks if there is a black piece UP diagonaly to the RIGHT of the pawn
+        //and thus if the pawn can move diagonally
+        //& if the chosen pawn isn't on the H-row
+        if(blackPieces.includes(chessBoard[cPi-1][cPj+1]) && cPj !== 7)
+        { 
+            checkStorage[cPi][cPj] = "[]";
+            checkStorage[cPi-1][cPj+1] = chosenPiece;
+            EnemyCheckChecker(); 
+
+            if(!wouldBeCheck)
+            {
+                legalMoves.push(squareNames[cPi-1][cPj+1]);
+            }
+            else
+            {
+                wouldBeCheck = false;
+            }
+            ResetCheckStorage();
+        }
+        //Checks if there is a black piece UP diagonally to the LEFT of the pawn
+        //and thus if the pawn can move diagonally
+        //and if the chosen pawn isn't on the A-row
+        if(blackPieces.includes(chessBoard[cPi-1][cPj-1]) && cPj !== 0)
+        {
+            checkStorage[cPi][cPj] = "[]";
+            checkStorage[cPi-1][cPj-1] = chosenPiece;
+            EnemyCheckChecker(); 
+
+            if(!wouldBeCheck)
+            {
+                legalMoves.push(squareNames[cPi-1][cPj-1]);
+            }
+            else
+            {
+                wouldBeCheck = false;
+            }
+            ResetCheckStorage();
+        }
+    }
+    else //Black
+    {
+        //Checks if the pawn can move one step
+        if(chessBoard[cPi+1][cPj] === "[]")
+        {
+            checkStorage[cPi][cPj] = "[]";
+            checkStorage[cPi+1][cPj] = chosenPiece;
+            EnemyCheckChecker(); 
+
+            if(!wouldBeCheck)
+            {
+                legalMoves.push(squareNames[cPi+1][cPj]);
+            }
+            else
+            {
+                wouldBeCheck = false;
+            }
+            ResetCheckStorage();
+        }
+        //Checks if the pawn can move two steps
+        if(unmovedPawns.includes(chosenPiece) && chessBoard[cPi+2][cPj] === "[]" && chessBoard[cPi+1][cPj] === "[]")
+        {
+            checkStorage[cPi][cPj] = "[]";
+            checkStorage[cPi+2][cPj] = chosenPiece;
+            EnemyCheckChecker(); 
+            
+            if(!wouldBeCheck)
+            {
+                legalMoves.push(squareNames[cPi+2][cPj]);
+                enPassantSquare = squareNames[cPi+1][cPj];
+            }
+            else
+            {
+                wouldBeCheck = false;
+            }
+            ResetCheckStorage();
+        }
+
+        //Checks if there is a piece DOWN diagonaly to the LEFT of the pawn
+        //and thus if the pawn can move diagonally
+        if(whitePieces.includes(chessBoard[cPi+1][cPj-1]) && cPj !== 0)
+        { 
+            checkStorage[cPi][cPj] = "[]";
+            checkStorage[cPi+1][cPj-1] = chosenPiece;
+            EnemyCheckChecker(); 
+            
+            if(!wouldBeCheck)
+            {
+                legalMoves.push(squareNames[cPi+1][cPj-1]);
+            }
+            else
+            {
+                wouldBeCheck = false;
+            }
+            ResetCheckStorage();  
+        }
+        //Checks if there is a piece DOWN diagonally to the RIGHT of the pawn
+        //and thus if the pawn can move diagonally
+        if(whitePieces.includes(chessBoard[cPi+1][cPj+1]) && cPj<7)
+        {
+            checkStorage[cPi][cPj] = "[]";
+            checkStorage[cPi+1][cPj+1] = chosenPiece;
+            EnemyCheckChecker(); 
+            
+            if(!wouldBeCheck)
+            {
+                legalMoves.push(squareNames[cPi+1][cPj+1]);
+            }
+            else
+            {
+                wouldBeCheck = false;
+            }
+            ResetCheckStorage();
+        }
+    }
+}
+
+function RookMovement()
+{    
+    IndexChosenPiece();  
+    //Checks if the ROOK can move to the RIGHT
+    if(cPj<7 && !friendlyPieces.includes(chessBoard[cPi][cPj+1]))
+    { 
+        var rookPj = cPj;
+          //The loop stops when reaching the H-row or if next square contains a friendly piece
+        while(rookPj<7 && !friendlyPieces.includes(chessBoard[cPi][rookPj+1]))
+        {
+            rookPj++;
+            checkStorage[cPi][cPj] = "[]";
+            checkStorage[cPi][rookPj] = chosenPiece;
+            EnemyCheckChecker(); 
+            if(!wouldBeCheck)
+            {
+                legalMoves.push(squareNames[cPi][rookPj]);
+            }
+            wouldBeCheck = false;
+            ResetCheckStorage();
+            //If the next square contains an enemy piece that square is being added to legalMoves,
+            //and the loop stops
+            if(enemyPieces.includes(chessBoard[cPi][rookPj]))
+            {  
+                break;
+            }  
+        }
+    } 
+    
+    //Checks if the ROOK can move to the LEFT
+    //If it's not on the A-row or there's a friendly piece next to it
+    //Since 0 isn't devisible by 0 we also have to check if it is on A1 (index 0)
+    if(cPj>0 && !friendlyPieces.includes(chessBoard[cPi][cPj-1]))
+    {
+        var rookPj = cPj;  
+
+        //The loop stops when reaching the A-row or if next square contains a friendly piece
+        while(rookPj>0 && !friendlyPieces.includes(chessBoard[cPi][rookPj-1]))
+        {
+            rookPj--;
+            checkStorage[cPi][cPj] = "[]";
+            checkStorage[cPi][rookPj] = chosenPiece;
+            EnemyCheckChecker(); 
+            if(!wouldBeCheck)
+            {
+                legalMoves.push(squareNames[cPi][rookPj]);
+            }
+            wouldBeCheck = false;
+            ResetCheckStorage();
+            //If the next square contains an enemy piece that square is being added to legalMoves,
+            //and the loop stops
+            if(enemyPieces.includes(chessBoard[cPi][rookPj-1]))
+            {
+                break;
+            }
+        }
+    }
+
+    //Checks if the ROOK can move DOWN. If it is >= 56 it is on the bottom line.
+    if(cPi<7 && !friendlyPieces.includes(chessBoard[cPi+1][cPj]))
+    {
+        var rookPi = cPi;
+        //The loop stops when reaching the 1-row or if next square contains a friendly piece
+        while(rookPi<7 && !friendlyPieces.includes(chessBoard[rookPi+1][cPj]))
+        {
+            rookPi++;
+            checkStorage[cPi][cPj] = "[]";
+            checkStorage[rookPi][cPj] = chosenPiece;
+            EnemyCheckChecker();
+            if(!wouldBeCheck)
+            {
+                legalMoves.push(squareNames[rookPi][cPj]);
+            }  
+            wouldBeCheck = false;
+            ResetCheckStorage();
+            //If the next square contains an enemy piece that square is being added to legalMoves,
+            //and the loop stops
+            if(enemyPieces.includes(chessBoard[rookPi][cPj]))
+            { 
+                break;
+            }
+          
+        }        
+    }
+
+    //Checks if the ROOK can move UP. If it is <= 7 it is on the top line.
+    if(cPi>0 && !friendlyPieces.includes(chessBoard[cPi-1][cPj]))
+    {
+        var rookPi = cPi;
+            
+        //The loop stops when reaching the 8-row or if next square contains a friendly piece
+        while(rookPi > 0 && !friendlyPieces.includes(chessBoard[rookPi-1][cPj]))
+        {
+            rookPi--;
+            checkStorage[cPi][cPj] = "[]";
+            checkStorage[rookPi][cPj] = chosenPiece;
+            EnemyCheckChecker(); 
+            if(!wouldBeCheck)
+            {
+                legalMoves.push(squareNames[rookPi][cPj]); 
+            }
+            wouldBeCheck = false;
+            ResetCheckStorage();
+            //If the next square contains an enemy piece that square is being added to legalMoves,
+            //and the loop stops
+            if(enemyPieces.includes(chessBoard[rookPi][cPj]))
+            { 
+                break;
+            }
+        }    
+    } 
+}
+
+function KnightMovement()
+{
+    IndexChosenPiece();  
+    for(var iN = 0; iN < chessBoard.length; iN++)
+    {
+        subChessBoard = chessBoard[iN];
+        if(iN === cPi-2 || iN === cPi+2)
+        {
+            for(var jN = 0; jN < subChessBoard.length; jN++)
+            {
+                if((jN === cPj-1 || jN === cPj+1) && !friendlyPieces.includes(chessBoard[iN][jN]))
+                {
+                    checkStorage[cPi][cPj] = "[]";
+                    checkStorage[iN][jN] = chosenPiece;
+                    EnemyCheckChecker();
+    
+                    if(!wouldBeCheck)
+                    {
+                        legalMoves.push(squareNames[iN][jN]);
+                    }
+                    else
+                    {
+                        wouldBeCheck = false;
+                    }
+                    ResetCheckStorage();
+                }
+            }
+        }
+        else if(iN === cPi-1 || iN === cPi+1)
+        {
+            for(var jN = 0; jN < subChessBoard.length; jN++)
+            {
+                if((jN === cPj-2 || jN === cPj+2) && !friendlyPieces.includes(chessBoard[iN][jN]))
+                {
+                    checkStorage[cPi][cPj] = "[]";
+                    checkStorage[iN][jN] = chosenPiece;
+                    EnemyCheckChecker();
+    
+                    if(!wouldBeCheck)
+                    {
+                        legalMoves.push(squareNames[iN][jN]);
+                    }
+                    else
+                    {
+                        wouldBeCheck = false;
+                    }
+                    ResetCheckStorage();
+                }
+            }
+        }
+    }
+}
+
+function BishopMovement()
+{
+    IndexChosenPiece();  
+    //Checks if the BISHOP can move UP-RIGHT. 
+    //If the piece is not on the edge and there is no friendly piece UP-RIGHT
+    if(cPi>0 && cPj<7 && !friendlyPieces.includes(chessBoard[cPi-1][cPj+1]))
+    { 
+        var bishopPi = cPi;
+        var bishopPj = cPj;
+        
+       //The loop stops when reaching the H-row or the 8-row or if the next square contains a friendly piece
+            while(bishopPi>0 && bishopPj<7 && !friendlyPieces.includes(chessBoard[bishopPi-1][bishopPj+1]))
+            {
+                bishopPi--;
+                bishopPj++;
+                checkStorage[cPi][cPj] = "[]";
+                checkStorage[bishopPi][bishopPj] = chosenPiece;
+                EnemyCheckChecker(); 
+                if(!wouldBeCheck)
+                {
+                    legalMoves.push(squareNames[bishopPi][bishopPj]);
+                }
+                wouldBeCheck = false;
+                ResetCheckStorage(); 
+                if(enemyPieces.includes(chessBoard[bishopPi][bishopPj]))
+                { 
+                    break;
+                } 
+            }
+       
+            
+    }
+
+    //Checks if the BISHOP can move UP-LEFT.
+    //If the piece is not on the edge and there is no friendly piece UP-LEFT
+    if(cPi > 0 && cPj > 0 && !friendlyPieces.includes(chessBoard[cPi-1][cPj-1]))
+    { 
+        var bishopPi = cPi;
+        var bishopPj = cPj;
+        
+        //The loop stops when reaching the A-row or the 8-row or if the next square contains a friendly piece
+        while(bishopPi > 0 && bishopPj > 0 && !friendlyPieces.includes(chessBoard[bishopPi-1][bishopPj-1]))
+        {
+            bishopPi--;
+            bishopPj--;
+            checkStorage[cPi][cPj] = "[]";
+            checkStorage[bishopPi][bishopPj] = chosenPiece;
+            EnemyCheckChecker(); 
+            if(!wouldBeCheck)
+            {
+                legalMoves.push(squareNames[bishopPi][bishopPj]);
+            }
+            wouldBeCheck = false;
+            ResetCheckStorage();
+            if(enemyPieces.includes(chessBoard[bishopPi][bishopPj]))
+            {
+                break;
+            }
+        }    
+    }
+
+    //Checks if the BISHOP can move DOWN-RIGHT. 
+    //If the piece is not on the edge and there is no friendly piece DOWN-RIGHT
+    if(cPj < 7 && cPi < 7 && !friendlyPieces.includes(chessBoard[cPi+1][cPj+1]))
+    {
+        var bishopPi = cPi;
+        var bishopPj = cPj;  
+
+        //The loop stops when reaching the H-row or the 1-row or if the next square contains a friendly piece
+        while(bishopPi < 7 && bishopPj < 7 && !friendlyPieces.includes(chessBoard[bishopPi+1][bishopPj+1]))
+        {
+            bishopPi++;
+            bishopPj++;
+            checkStorage[cPi][cPj] = "[]";
+            checkStorage[bishopPi][bishopPj] = chosenPiece;
+            EnemyCheckChecker();
+            if(!wouldBeCheck)
+            {
+                legalMoves.push(squareNames[bishopPi][bishopPj]);
+            }
+            wouldBeCheck = false;
+            ResetCheckStorage();
+            if(enemyPieces.includes(chessBoard[bishopPi][bishopPj]))
+            {
+                break;
+            } 
+        }      
+    }
+
+    //Checks if the BISHOP can move DOWN-LEFT.
+    //If the piece is not on the edge and there is no friendly piece DOWN-LEFT
+    if(cPj > 0 && cPi < 7 && !friendlyPieces.includes(chessBoard[cPi+1][cPj-1]))
+    { 
+        var bishopPi = cPi;
+        var bishopPj = cPj;
+
+        //The loop stops when reaching the A-row or the 1-row or if the next square contains a friendly piece
+        while(bishopPi < 7 && bishopPj > 0 && !friendlyPieces.includes(chessBoard[bishopPi+1][bishopPj-1]))
+        {
+            bishopPi++;
+            bishopPj--;
+            checkStorage[cPi][cPj] = "[]";
+            checkStorage[bishopPi][bishopPj] = chosenPiece;
+            EnemyCheckChecker(); 
+            if(!wouldBeCheck)
+            {
+                legalMoves.push(squareNames[bishopPi][bishopPj]);
+            }
+            wouldBeCheck = false;
+            ResetCheckStorage();
+            if(enemyPieces.includes(chessBoard[bishopPi][bishopPj]))
+            {
+                break;
+            }
+        } 
+    }
+}
+
+function QueenMovement()
+{
+    //Since the queen can move as both the rook and the bishop, those functions are called
+    RookMovement();
+    BishopMovement();
+}
+
+function KingMovement()
+{
+    IndexChosenPiece();  
+    for(var iK = 0; iK < chessBoard.length; iK++)  
+    {
+        subChessBoard = chessBoard[iK];
+        if(iK === cPi-1 || (iK === cPi && jK !== cPj) || iK === cPi+1)
+        {
+            for(var jK = 0; jK < subChessBoard.length; jK++)
+            {
+                if(jK === cPj-1 || jK === cPj || jK === cPj+1)
+                {
+                    checkStorage[cPi][cPj] = "[]";
+                    checkStorage[iK][jK] = chosenPiece;
+                    EnemyCheckChecker();
+                    ResetCheckStorage();
+
+                    if(!wouldBeCheck && !friendlyPieces.includes(chessBoard[iK][jK]))
+                    {
+                        legalMoves.push(squareNames[iK][jK]);
+                    }
+                } 
+                wouldBeCheck = false;
+            }
+        }
+    }
+}
+
+function ResetCheckStorage()
+{
+    for(var rCi = 0; rCi < chessBoard.length; rCi++)
+    {
+        subChessBoard = chessBoard[rCi];
+        for(var rCj = 0; rCj < subChessBoard.length; rCj++)
+        {
+            checkStorage[rCi][rCj] = chessBoard[rCi][rCj];
+        }
+    }
+}
+    //CHECK FUNCTIONS//
+//If isCheck, this function checks if any piece can be moved
+function MateChecker()
+{
+    //Is turned true so ResetEnPassant() or LegalMoves() are not runned in MovementManager()
+    checkingForMate = true;
+    //Goes through all friendly pieces to see if any can make a move
+    for(iM = 0; iM < friendlyPieces.length; iM++)
+    {
+        chosenPiece = friendlyPieces[iM];
+        MovementManager();
+        isCheck = true;
+    }
+    checkingForMate = false;
+
+    if(legalMoves.length === 0)
+    {
+        isMate = true;
+    }
+    //Clears legalMoves 
+    legalMoves.splice(0); 
+}
+
+function IndexOfKing()
+{
+    for(cKi = 0; cKi < checkStorage.length; cKi++)
+    {
+        var subCheckStorage = checkStorage[cKi];
+        for(cKj = 0; cKj < subCheckStorage.length; cKj++)
+        {
+            if(checkStorage[cKi][cKj] === kingPiece)
+            {
+                return;
+            }
+        }
+    }
+}
+
+//Checks if any enemy piece can take or would be able to take the king
+function EnemyCheckChecker()
+{
+    IndexOfKing();
+
+    PawnChecker();
+   
+    if(!checkVar)
+    {
+        RookChecker();
+    }
+    if(!checkVar)
+    {
+        KnightChecker();
+    }
+    if(!checkVar)
+    {
+        BishopChecker();
+    }
+
+    if(isCheckingForCheck)
+    {
+        isCheck = checkVar;
+        checkVar = false;
+    }
+    else
+    {
+        wouldBeCheck = checkVar;
+        checkVar = false;
+    }
+}
+
+
+//These functions checks if a piece can take the king
+function PawnChecker()
+{
+    if(isWhiteTurn)
+    {
+        for(cCi = 0; cCi < checkStorage.length-1; cCi++)
+        {
+            var subCheckStorage = checkStorage[cCi];
+            if(cCi === cKi-1)
+            {
+                for(cCj = 0; cCj < subCheckStorage.length-1; cCj++)
+                {
+                    if((cCj === cKj-1 || cCj === cKj+1) && checkStorage[cCi][cCj].includes("P"))
+                    {
+                        checkVar = true;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        for(var cCi = 0; cCi < checkStorage.length-1; cCi++)
+        {
+            var subCheckStorage = checkStorage[cCi];
+            if(cCi === cKi+1)
+            {
+                for(var cCj = 0; cCj < subCheckStorage.length-1; cCj++)
+                {
+                    if((cCj === cKj-1 || cCj === cKj+1) && checkStorage[cCi][cCj].includes("p"))
+                    {
+                        checkVar = true;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+}
+
+function RookChecker()
+{
+    //This for-loop checks the vertical line of the king
+    for(cCi = 0; cCi < checkStorage.length; cCi++)
+    {
+        cCj = cKj;
+
+        if(checkStorage[cCi][cCj].includes(rookCheck) || checkStorage[cCi][cCj].includes(queenCheck))
+        {
+            if(cCi>cKi && checkVar === true)
+            {
+                return;
+            }
+            else
+            {
+                checkVar = true;
+            }
+        }
+        else if(checkStorage[cCi][cCj] === kingPiece)
+        {   
+            if(checkVar)
+            {
+                return;
+            }
+            else
+            {
+                checkVar = true;
+            }
+        }
+        else if(enemyPieces.includes(checkStorage[cCi][cCj]) || friendlyPieces.includes(checkStorage[cCi][cCj]))
+        {
+            if(cCi>cKi && checkVar === true)
+            {
+                checkVar = false;
+                break;
+            }
+            else
+            {
+                checkVar = false;
+            }
+        }
+    }
+    //In case there was no piece under the king we turn checkVar back to false
+    checkVar = false;
+    //This for-loop checks the horizontal line of the king
+    //Since the board is a square we're using checkStorage.length
+    for(cCj = 0; cCj < checkStorage.length; cCj++)
+    {
+        cCi = cKi;
+
+        if(checkStorage[cCi][cCj].includes(rookCheck) || checkStorage[cCi][cCj].includes(queenCheck))
+        {
+            if(cCj>cKj && checkVar === true)
+            {
+                return;
+            }
+            else
+            {
+                checkVar = true;
+            }
+        }
+        else if(cCj === cKj)
+        {   
+            if(checkVar)
+            {
+                return;
+            }
+            else
+            {
+                checkVar = true;
+            }
+        }
+        else if(enemyPieces.includes(checkStorage[cCi][cCj]) || friendlyPieces.includes(checkStorage[cCi][cCj]))
+        {
+            if(cCj>cKj && checkVar === true)
+            {
+                checkVar = false;
+                break;
+            }
+            else
+            {
+                checkVar = false;
+            }
+        }
+    }
+}
+
+function KnightChecker()
+{
+    for(cCi = 0; cCi < checkStorage.length-1; cCi++)
+    {
+        if(cCi === cKi+2 || cCi === cKi-2)
+        { 
+            subcheckStorage = checkStorage[cCi];
+            for(cCj = 0; cCj < subcheckStorage.length-1; cCj++)
+            {
+                if((cCj === cKj+1 || cCj === cKj-1) && (checkStorage[cCi][cCj].includes(knightCheck)))
+                {
+                    checkVar = true;
+                    return;
+                }
+            }
+        }
+        else if(cCi === cKi+1 || cCi === cKi-1)
+        {
+            subcheckStorage = checkStorage[cCi];
+            for(cCj = 0; cCj < subcheckStorage.length-1; cCj++)
+            {
+                if((cCj === cKj+2 || cCj === cKj-2) && (checkStorage[cCi][cCj].includes(knightCheck)))
+                {
+                    checkVar = true;
+                    return;
+                }
+            }
+        }
+    }
+}
+
+function BishopChecker()
+{
+    //Is used for calculating what squares to check
+    //It will both add and subtract the number from the kings horizontal index 
+    //and then 1 will be subtracted when at the end of the loop
+    //When passing the kings vertical index it will become negative and start to subtract or add 
+    //in the other direction
+    var addNum = cKi;
+
+    for(cCi = 0; cCi < checkStorage.length; cCi++)
+    {
+        subcheckStorage = checkStorage[cCi];
+        for(cCj = 0; cCj < subcheckStorage.length; cCj++)
+        {
+            //Checks if an enemy queen or bishop is on the square
+            if(cCj === cKj-addNum  && (checkStorage[cCi][cCj].includes(bishopCheck) || checkStorage[cCi][cCj].includes(queenCheck)))
+            {
+                checkVar = true;
+                if(cCi>cKi)
+                {
+                    return;
+                }
+            }
+            //Checks if a piece other than the enemy queen or bishop or the king is on the square
+            else if(cCj === cKj-addNum  && !checkStorage[cCi][cCj].includes(bishopCheck) && !checkStorage[cCi][cCj].includes(queenCheck)
+                    && (checkStorage[cCi][cCj] !== "[]" || checkStorage[cCi][cCj] !== kingPiece))
+            {
+                checkVar = false;
+                if(cCi>cKi)
+                {
+                    break;
+                }
+            }
+            else if(checkStorage[cCi][cCj] === kingPiece)
+            {
+                if(checkVar)
+                {
+                    return;
+                }
+                else
+                {
+                    //Turns true until it reaches a square not including enemy bishop or queen
+                    checkVar = true;
+                }
+            }
+        }
+        addNum--;
+    }
+
+    cCi--;
+    cCj--;
+    //If no piece was found checkVar becomes false
+    if(checkStorage[cCi][cCj] === "[]")
+    {
+        checkVar = false;
+    }
+    addNum = cKi;
+
+    for(cCi = 0; cCi < checkStorage.length; cCi++)
+    {
+        subcheckStorage = checkStorage[cCi];
+        for(cCj = 0; cCj < subcheckStorage.length; cCj++)
+        {
+            if(cCj === cKj+addNum && (checkStorage[cCi][cCj].includes(rookCheck) || checkStorage[cCi][cCj].includes(queenCheck)))
+            {
+                checkVar = true;
+                if(cCi>cKi)
+                {
+                    return;
+                }
+            }
+            else if(cCj === cKj+addNum && (friendlyPieces.includes(checkStorage[cCi][cCj]) || enemyPieces.includes(checkStorage[cCi][cCj])))
+            {
+                checkVar = false; 
+                if(cCi>cKi)
+                {
+                    return;
+                }  
+            }
+            else if(checkStorage[cCi][cCj] === kingPiece)
+            {
+                if(checkVar)
+                {
+                    return;
+                }
+                else
+                {
+                    //Turns true until it reaches a square not including enemy bishop or queen
+                    checkVar = true;
+                }
+            }
+            if(cCj === subcheckStorage.length)
+            {
+                break;
+            }
+        }
+        addNum--;
+    }
+
+    cCi--;
+    cCj--;
+    //If no piece was found checkVar becomes false
+    if(checkStorage[cCi][cCj] === "[]")
+    {
+        checkVar = false;
+    }
+}
+
+//If check mate everything is reseted and a restart button appears
+function GameOver()
+{
+    restartButton.style.display = "block";
+    squareButton.style.display = "none";
+    output.style.display = "none";
+    isCheck = false;
+    isWhiteTurn = true;
+    isCastlingBr1 = false;
+    isCastlingBr2 = false;
+    isCastlingWr1 = false;
+    isCastlingWr2 = false;
+    checkingForMate = false;
+    startGame = false;
+    
+    chessBoard = [
+        ["R1", "N1", "B1", "Q1", "KI", "B2", "N2", "R2"],
+        ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"],
+        ["[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"],
+        ["[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"],
+        ["[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"],
+        ["[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"],
+        ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"],
+        ["r1", "n1", "b1", "q1", "ki", "b2", "n2", "r2"]
+    ];
+
+    checkStorage = [
+        ["R1", "N1", "B1", "Q1", "KI", "B2", "N2", "R2"],
+        ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"],
+        ["[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"],
+        ["[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"],
+        ["[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"],
+        ["[]", "[]", "[]", "[]", "[]", "[]", "[]", "[]"],
+        ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"],
+        ["r1", "n1", "b1", "q1", "ki", "b2", "n2", "r2"]
+    ];
+
+    unmovedPawns = ["p1", "p2", "p3", "p4", "p5","p6", "p7", "p8", "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"];
+    unmovedCastling = ["ki", "r1", "r2", "KI", "R1", "R2"];
+
+    whitePieces = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "r1", "r2", "b1", "b2", "n1", "n2", "q1", "ki"];
+    blackPieces = ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "R1", "R2", "B1", "B2", "N1", "N2", "Q1", "KI"];
+
+    legalMoves.splice(0);
+}
+</script>
