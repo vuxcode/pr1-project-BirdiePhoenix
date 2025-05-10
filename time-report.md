@@ -279,10 +279,19 @@ For example:
       - this was changed because it created problems to use isCheck both when checking if a player is in check and when checking if moving a piece to a square would make the king check.
   - Added so all isCastling variables are turned false in case the player choses not to do castling, so that the next player doesnt get the question
   - In GameOver() I added so legalMoves and checkSquares are cleared
-  - 2025-05-05 Worked for 3 hours
-    - Added comments in the script
-    - Changed so there is only 1 if-statement checking if isCastling... is true
-      - Instead of 1 for each color there is only 1 checking for all of them since they are all turned false in EndTurn()
+- 2025-05-05 Worked for 3 hours
+  - Added comments in the script
+  - Changed so there is only 1 if-statement checking if isCastling... is true
+    - Instead of 1 for each color there is only 1 checking for all of them since they are all turned false in EndTurn()
+- 2025-05-08 Worked for 15 hours
+  - Tested to convert the arrays into 2D
+  - Changed the movement functions and the check functions to work in 2d
+  - Got the movement functions to work but not the check functions
+- 2025-05-09 Worked for 4 hours
+  - Got the check functions to work in 2d
+  - Started to convert the castling functions to work in 2d, it didn't work
+- 2025-05-10 Worked for 1.5 hours
+  - Got the castling functions to work in 2d
         
 
        
