@@ -483,18 +483,13 @@ function SquareChooser()
         //If a player has performed en passant, this removes the enemy piece that was taken
         if(chosenSquare === enPassantSquare)
         {
-            console.log("EnPassant");
-            console.log(chosenSquare);
-            console.log(enPassantSquare);
             if(isWhiteTurn && (cSj === cPj+1 || cSi === cPj-1) && chosenPiece.includes("p"))
             {
                 chessBoard[cPi+1][cPj] = "[]";
-                console.log("Removing");
             }
             else if((cSj === cPj+1 || cSi === cPj-1) && chosenPiece.includes("P"))
             {
                 chessBoard[cPi-1][cPj] = "[]";
-                console.log("Removing");
             }
         }
 
@@ -741,7 +736,7 @@ function Br1Castling()
 function Br2Castling()
 {
     chessBoard[0][4] = "[]";
-    chessBoard[0][5] = "R1";
+    chessBoard[0][5] = "R2";
     chessBoard[0][6] = "KI";
     chessBoard[0][7] = "[]";
 
@@ -1464,18 +1459,18 @@ function KingMovement()
     for(var iK = 0; iK < chessBoard.length; iK++)  
     {
         subChessBoard = chessBoard[iK];
-        if(iK === cPi-1 || (iK === cPi && jK !== cPj) || iK === cPi+1)
+        if(iK === cPi-1 || iK === cPi || iK === cPi+1)
         {
             for(var jK = 0; jK < subChessBoard.length; jK++)
             {
-                if(jK === cPj-1 || jK === cPj || jK === cPj+1)
+                if((jK === cPj-1 || (jK === cPj && iK !== cPi) || jK === cPj+1) && !friendlyPieces.includes(chessBoard[iK][jK]))
                 {
                     checkStorage[cPi][cPj] = "[]";
                     checkStorage[iK][jK] = chosenPiece;
                     EnemyCheckChecker();
                     ResetCheckStorage();
 
-                    if(!wouldBeCheck && !friendlyPieces.includes(chessBoard[iK][jK]))
+                    if(!wouldBeCheck)
                     {
                         legalMoves.push(squareNames[iK][jK]);
                     }
@@ -1507,6 +1502,7 @@ function MateChecker()
     for(iM = 0; iM < friendlyPieces.length; iM++)
     {
         chosenPiece = friendlyPieces[iM];
+        console.log(chosenPiece);
         MovementManager();
         isCheck = true;
     }
@@ -1527,6 +1523,7 @@ function IndexOfKing()
         var subCheckStorage = checkStorage[cKi];
         for(cKj = 0; cKj < subCheckStorage.length; cKj++)
         {
+            //console.log(checkStorage[cKi][cKj]);
             if(checkStorage[cKi][cKj] === kingPiece)
             {
                 return;
@@ -1694,6 +1691,7 @@ function RookChecker()
             }
         }
     }
+    checkVar = false;
 }
 
 function KnightChecker()
@@ -1736,101 +1734,102 @@ function BishopChecker()
     //in the other direction
     var addNum = cKi;
 
-    for(cCi = 0; cCi < checkStorage.length; cCi++)
+    if(cKi === 0 && cKj === 7)
     {
-        subcheckStorage = checkStorage[cCi];
-        for(cCj = 0; cCj < subcheckStorage.length; cCj++)
+        console.log("King is in the top  right corner!");
+    }
+    else
+    {
+        for(cCi = 0; cCi < checkStorage.length; cCi++)
         {
-            //Checks if an enemy queen or bishop is on the square
-            if(cCj === cKj-addNum  && (checkStorage[cCi][cCj].includes(bishopCheck) || checkStorage[cCi][cCj].includes(queenCheck)))
+            subcheckStorage = checkStorage[cCi];
+            for(cCj = 0; cCj < subcheckStorage.length; cCj++)
             {
-                checkVar = true;
-                if(cCi>cKi)
+                //Checks if an enemy queen or bishop is on the square
+                if(cCj === cKj-addNum  && (checkStorage[cCi][cCj].includes(bishopCheck) || checkStorage[cCi][cCj].includes(queenCheck)))
                 {
-                    return;
+                    checkVar = true;
+                    if(cCi>cKi)
+                    {
+                        return;
+                    }
+                }
+                //Checks if a piece other than the enemy queen or bishop or the king is on the square
+                else if(cCj === cKj-addNum  && !checkStorage[cCi][cCj].includes(bishopCheck) && !checkStorage[cCi][cCj].includes(queenCheck)
+                        && (checkStorage[cCi][cCj] !== "[]" || checkStorage[cCi][cCj] !== kingPiece))
+                {
+                    checkVar = false;
+                    if(cCi>cKi)
+                    {
+                        break;
+                    }
+                }
+                else if(checkStorage[cCi][cCj] === kingPiece)
+                {
+                    if(checkVar)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        //Turns true until it reaches a square not including enemy bishop or queen
+                        checkVar = true;
+                    }
                 }
             }
-            //Checks if a piece other than the enemy queen or bishop or the king is on the square
-            else if(cCj === cKj-addNum  && !checkStorage[cCi][cCj].includes(bishopCheck) && !checkStorage[cCi][cCj].includes(queenCheck)
-                    && (checkStorage[cCi][cCj] !== "[]" || checkStorage[cCi][cCj] !== kingPiece))
+            addNum--;
+        }
+        checkVar = false;
+    }
+
+    addNum = cKi;
+
+    if(cKi === 7 && cKj == 0)
+    {
+        console.log("The king is in the bottom left corner!")
+    }
+    else
+    {
+        for(cCi = 0; cCi < checkStorage.length; cCi++)
+        {
+            subcheckStorage = checkStorage[cCi];
+            for(cCj = 0; cCj < subcheckStorage.length; cCj++)
             {
-                checkVar = false;
-                if(cCi>cKi)
+                if(cCj === cKj+addNum && (checkStorage[cCi][cCj].includes(rookCheck) || checkStorage[cCi][cCj].includes(queenCheck)))
+                {
+                    checkVar = true;
+                    if(cCi>cKi)
+                    {
+                        return;
+                    }
+                }
+                else if(cCj === cKj+addNum && (friendlyPieces.includes(checkStorage[cCi][cCj]) || enemyPieces.includes(checkStorage[cCi][cCj])))
+                {
+                    checkVar = false; 
+                    if(cCi>cKi)
+                    {
+                        return;
+                    }  
+                }
+                else if(checkStorage[cCi][cCj] === kingPiece)
+                {
+                    if(checkVar)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        //Turns true until it reaches a square not including enemy bishop or queen
+                        checkVar = true;
+                    }
+                }
+                if(cCj === subcheckStorage.length)
                 {
                     break;
                 }
             }
-            else if(checkStorage[cCi][cCj] === kingPiece)
-            {
-                if(checkVar)
-                {
-                    return;
-                }
-                else
-                {
-                    //Turns true until it reaches a square not including enemy bishop or queen
-                    checkVar = true;
-                }
-            }
+            addNum--;
         }
-        addNum--;
-    }
-
-    cCi--;
-    cCj--;
-    //If no piece was found checkVar becomes false
-    if(checkStorage[cCi][cCj] === "[]")
-    {
-        checkVar = false;
-    }
-    addNum = cKi;
-
-    for(cCi = 0; cCi < checkStorage.length; cCi++)
-    {
-        subcheckStorage = checkStorage[cCi];
-        for(cCj = 0; cCj < subcheckStorage.length; cCj++)
-        {
-            if(cCj === cKj+addNum && (checkStorage[cCi][cCj].includes(rookCheck) || checkStorage[cCi][cCj].includes(queenCheck)))
-            {
-                checkVar = true;
-                if(cCi>cKi)
-                {
-                    return;
-                }
-            }
-            else if(cCj === cKj+addNum && (friendlyPieces.includes(checkStorage[cCi][cCj]) || enemyPieces.includes(checkStorage[cCi][cCj])))
-            {
-                checkVar = false; 
-                if(cCi>cKi)
-                {
-                    return;
-                }  
-            }
-            else if(checkStorage[cCi][cCj] === kingPiece)
-            {
-                if(checkVar)
-                {
-                    return;
-                }
-                else
-                {
-                    //Turns true until it reaches a square not including enemy bishop or queen
-                    checkVar = true;
-                }
-            }
-            if(cCj === subcheckStorage.length)
-            {
-                break;
-            }
-        }
-        addNum--;
-    }
-
-    cCi--;
-    cCj--;
-    //If no piece was found checkVar becomes false
-    if(checkStorage[cCi][cCj] === "[]")
-    {
         checkVar = false;
     }
 }
