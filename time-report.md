@@ -100,51 +100,51 @@ For example:
   - Added 1 more infotext in preparations to replace the prompts with textboxes
   - Changed so the player turns now shows in HTML in the info text at the top instead of showing up as prompts  
   
- - 2025-04-12 11.30 Worked for 0.5 hour
-   - Added a textbox
-   - Made it possible to change the second infotext
-   - Changed the prompt that asked for what piece to innerHTML
+- 2025-04-12 11.30 Worked for 0.5 hour
+ - Added a textbox
+ - Made it possible to change the second infotext
+ - Changed the prompt that asked for what piece to innerHTML
+
+- 2025-04-13 22.00 Worked for 1.5 hours
+ - Added 1 button and changed 1 button
+   - Added a button to confirm the choice of square
+   - Changed the turnButton to pieceButton wich confirms the choice of piece
+ - 3 functions
+   - StartGame:
+     - Hides the startButton and the squareButton and shows the pieceButton and the textbox and then goes to TurnOrder
+   - BetweenPieceAndSquare:
+     - Hides the pieceButton and shows the squareButton. infoText2 is changed to ask what square the piece should be moved to.
+   - SquareChooser:
+     - Defines the chosenSquare variable and makes it upperCase.
+     - Moved the legalMoves loop here from EndTurn.
+     - Removed the while-loop and kept the if-statement. If legalMoves include the chosen square the EndFunction is also being runned
+     - but if not we'll go back to the BetweenPiecAndSquare function.
+ - Changed the TurnOrder function
+   - It now only defines the enemyPieces and friendlyPieces variables and changes the top text to wich players turn it is and the bottom text
+   - to ask what piece the player wants to move. To continue to the PieceChooser function the player needs to press the confirmPiece button
+ - Changed the PieceChooser function
+   - It now defines the chosenPiece variable
+   - changes the chosenPiece variable to upper- or lowercase
+   - runs the MovementManager and then the BetweenPieceAndSquare functions
+ - Changed the EndTurn function:
+   - Removed everything except from UpgradePiece(); to PrintBoard();
+   - Added so the StartGame-function is being runned in the end
   
- - 2025-04-13 22.00 Worked for 1.5 hours
-   - Added 1 button and changed 1 button
-     - Added a button to confirm the choice of square
-     - Changed the turnButton to pieceButton wich confirms the choice of piece
-   - 3 functions
-     - StartGame:
-       - Hides the startButton and the squareButton and shows the pieceButton and the textbox and then goes to TurnOrder
-     - BetweenPieceAndSquare:
-       - Hides the pieceButton and shows the squareButton. infoText2 is changed to ask what square the piece should be moved to.
-     - SquareChooser:
-       - Defines the chosenSquare variable and makes it upperCase.
-       - Moved the legalMoves loop here from EndTurn.
-       - Removed the while-loop and kept the if-statement. If legalMoves include the chosen square the EndFunction is also being runned
-       - but if not we'll go back to the BetweenPiecAndSquare function.
-   - Changed the TurnOrder function
-     - It now only defines the enemyPieces and friendlyPieces variables and changes the top text to wich players turn it is and the bottom text
-     - to ask what piece the player wants to move. To continue to the PieceChooser function the player needs to press the confirmPiece button
-   - Changed the PieceChooser function
-     - It now defines the chosenPiece variable
-     - changes the chosenPiece variable to upper- or lowercase
-     - runs the MovementManager and then the BetweenPieceAndSquare functions
-   - Changed the EndTurn function:
-     - Removed everything except from UpgradePiece(); to PrintBoard();
-     - Added so the StartGame-function is being runned in the end
-    
- - 2025-04-16 16.00 Worked for 1 hour
-   - To make things easier for me I created new functions and variables to be able to check for check
-     - I might change this back to the original idea to get shorter amount of code
-   - 7 function
-     - Copied the MovementManager and all the movement functions and changed their names
-     - MovmentManager -> CheckManager
-     - "Piece"Movement -> "Piece"Checker
-   - 2 variables
-     - kingslayer: replaced the chosenPiece variable in the new functions
-     - checkSquares: an array that replaced the legalMoves variable in the new function. This stores all the enemie moves
-   - Changed all the friendlyPieces variables to the enemyPieces variable and the other way around in the new movement functions
-   - Shortened the PawnChecker
-     - Removed the code for checking if the pawn could move forward, since it only can attack diagonally
-     - Switched places on the code in the if(isWhiteTurn)
-    
+- 2025-04-16 16.00 Worked for 1 hour
+ - To make things easier for me I created new functions and variables to be able to check for check
+   - I might change this back to the original idea to get shorter amount of code
+ - 7 function
+   - Copied the MovementManager and all the movement functions and changed their names
+   - MovmentManager -> CheckManager
+   - "Piece"Movement -> "Piece"Checker
+ - 2 variables
+   - kingslayer: replaced the chosenPiece variable in the new functions
+   - checkSquares: an array that replaced the legalMoves variable in the new function. This stores all the enemie moves
+ - Changed all the friendlyPieces variables to the enemyPieces variable and the other way around in the new movement functions
+ - Shortened the PawnChecker
+   - Removed the code for checking if the pawn could move forward, since it only can attack diagonally
+   - Switched places on the code in the if(isWhiteTurn)
+
 - 2025-04-18 11.00 Worked for 1 hour
    - Changed the size of info1
      - For better visibility of what players turn it is
@@ -294,6 +294,69 @@ For example:
   - Got the castling functions to work in 2d
   - Got everything to work in 2d
   - Reorginized the script
+ 
+- All changes in the converting to 2D:
+  - Changed chessBoard[], squareNames[] and checkStorage[] to 2D
+  - Changed upgradeWhitePieces[] and upgradeBlackPieces[]
+    - Removed all the pawns and the kings, since the pawn cannot be upgraded to hose
+  - Removed 4 variables that were not used anymore
+    - checkSquares[]
+    - pieceIndex
+    - squareIndex
+    - kingSlayer
+  - Added 22 new global variables
+    - subChessBoard
+      - is declared as = chessBoard[index]
+      - is used when lookintg for things in the chessBoard[]
+    - 6 piece variables wich will be declared differently depending on what players turn it is
+      - kingPiece
+      - queenCheck
+      - rookCheck
+      - bishopCheck
+      - knightCheck
+      - pawnCheck
+    - 10 index variables
+      - cPi (chosen piece outer index)
+      - cPj (chosen piece inner index)
+      - cSi (chosen square outer index)
+      - cSj (chosen square inner index)
+      - cKi (outer index of the king) (used when checking for check)
+      - cKj (inner index of the king)
+      - cCi (check checking outer index)
+      - cCj (check checking inner index)
+      - rKi (rook king inner index) (used during castling)
+      - rKj (rook king outer index)
+    - 4 castling variables
+      - castlingSteps
+        - used to decide how many steps to check for check
+      - castlingKi
+        - will be white or black king
+      - castlingR1
+      - castlingR2
+        - will be white or black rooks
+    - checkVar
+      - is used in EnemyCheckChecker()
+      - will be either isCheck or wouldBeCheck
+  - Changed all places where looking for index inside the 2D arrays to work
+  - Added so the textBox clears with output.value = ""; after every new choice
+  - 3 functions to find indexes
+    - IndexChosenPiece()
+    - IndexChosenSquare()
+    - IndexOfKing()
+  - Reduced the functions to update chessBoard when castling
+    -  1 for each side
+    -  using rKi to decide what line it is (white or black)
+    -  using castlingR1, castlingR2 and castlingKi to decide what color
+  - ds
+    - CastlingCheckChecker()
+      - Looking for check when castling
+    - ResetCheckStorage()
+      - Uses a loop to change all elements in checkStorage[] back to be the same as chessBoard[]
+  - Updated the movement functions to work in 2D
+  - Changed KnightMovement() and KingMovement() to use loops to find the possible moves
+  - Changed all check functions to proceed from the king instead of every enemy piece
+    - Runs PawnChecker() and then only proceeds to the next functions if the king is not thretened from any of that kind
+  - Removed KingChecker() since a king never can be next to another king
         
 
        
