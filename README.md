@@ -23,5 +23,29 @@ The final program is not the goal! The aim of the project is to show how you hav
 > Before the final submission date you should include a "PROJECT SUMMARY" in this section here. 
 
 # User Guide
+How To Play:
 
-> Write a clear user guide for how someone should use your program.
+Uppercase is the black pieces and lowercase is the white pieces.
+-P = Pawn
+-R = Rook
+-N = Knight
+-B = Bishop
+-Q = Queen
+-KI = King
+
+1. Press Start Game
+2. Write what piece you want to move. (use the letter of the piece and the number to speciefy which of those pieces you want to move)
+3. Press Confirm Piece
+4. Write what square you want to move the piece to. (A-H + 1-8)
+5. Press Confirm Square
+6. If Castling is possible;
+   -Press Yes or No
+   -Press what rook you want to use in the Castling (r1. r2, R1, R2)
+7. When reaching the edge of the board with a pawn, you may upgrade it
+   -Write what kind of piece you want to upgrade the pawn into.
+     -R = Rook
+     -N = Knight
+     -B = Bishop
+     -Q = Queen
+8. When a player is in Check Mate, press Restart Game if you want to play again
+
