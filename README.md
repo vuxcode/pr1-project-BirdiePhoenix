@@ -26,12 +26,12 @@ The final program is not the goal! The aim of the project is to show how you hav
 How To Play:
 
 Uppercase is the black pieces and lowercase is the white pieces.
--P = Pawn
--R = Rook
--N = Knight
--B = Bishop
--Q = Queen
--KI = King
+P = Pawn,
+R = Rook,
+N = Knight,
+B = Bishop,
+Q = Queen,
+KI = King.
 
 1. Press Start Game
 2. Write what piece you want to move. (use the letter of the piece and the number to speciefy which of those pieces you want to move)
@@ -43,9 +43,9 @@ Uppercase is the black pieces and lowercase is the white pieces.
    -Press what rook you want to use in the Castling (r1. r2, R1, R2)
 7. When reaching the edge of the board with a pawn, you may upgrade it
    -Write what kind of piece you want to upgrade the pawn into.
-     -R = Rook
-     -N = Knight
-     -B = Bishop
-     -Q = Queen
+     R = Rook,
+     N = Knight,
+     B = Bishop,
+     Q = Queen.
 8. When a player is in Check Mate, press Restart Game if you want to play again
 
