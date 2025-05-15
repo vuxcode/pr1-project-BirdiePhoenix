@@ -19,12 +19,15 @@ The final program is not the goal! The aim of the project is to show how you hav
 - Buttons if time    
 
 # Project Summary
+- Presentation
+  - A chess game
 
 - Improvements:
   - The main thing to improve if I had more time would be the visuals of the game. Instead of having a HTML based game it would be a much better experience for the players if their was an actual board on the screen, with pieces you could move by dragging them or pushing them and the squares. To be able to this I would need much more knowledge in webbutveckling and HTML code.
   - Another thing to improve would be to show on the screen all the square names. This is probably something I could have figured out, without any further knowledge, but the only way I could think of right now is to include those in the array which would mean I had to change the loops, so they don't check those elements.
   - It would also be nice to highlight the squares where you could move to, which could be made by changing the color of those elements
   - The pawn functions could also be changed into using loops to calculate the moves. For this to work I would have to create a variable that can be used to distinguish the differnet player colours.
+
 - Budget:
   - The total amount of hours spent on the project: 76 hours
   - The main reason for this was the change to 2D arrays
