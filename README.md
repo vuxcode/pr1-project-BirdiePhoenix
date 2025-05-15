@@ -20,11 +20,26 @@ The final program is not the goal! The aim of the project is to show how you hav
 
 # Project Summary
 
-- Improvements
+- Improvements:
   - The main thing to improve if I had more time would be the visuals of the game. Instead of having a HTML based game it would be a much better experience for the players if their was an actual board on the screen, with pieces you could move by dragging them or pushing them and the squares. To be able to this I would need much more knowledge in webbutveckling and HTML code.
   - Another thing to improve would be to show on the screen all the square names. This is probably something I could have figured out, without any further knowledge, but the only way I could think of right now is to include those in the array which would mean I had to change the loops, so they don't check those elements.
   - It would also be nice to highlight the squares where you could move to, which could be made by changing the color of those elements
   - The pawn functions could also be changed into using loops to calculate the moves. For this to work I would have to create a variable that can be used to distinguish the differnet player colours.
+- Budget:
+  - The total amount of hours spent on the project: 76 hours
+  - The main reason for this was the change to 2D arrays
+    - In the conversion I spent about 20 hours only fixing the bugs that appeard, mainly on check bugs
+  - After about 35 hours I had implemented everything that I promised to include, except for the pickups since I chose to not include any pickups
+  - If I, from the beginning, had made the arrays in 2D, I could probably have made the project in about 30 hours, that is if you don't include the problems below
+  - The main reasons why I excided the 30 hours (except for the 2D-conversion) was the following:
+1. Bug-fixes:
+  - Quite alot of bugs appeard during the developement, some appeard when solving curtain things like the check mechanics, but some where due to sloppy mistakes
+2. Learned new things:
+  - For example how to create textboxes
+    - Before that, I used alerts and prompts to build the game, it took some hours to convert it to the new system (textbox and buttons)
+3. Poor planning
+  - Even though my planning wasn't super bad, it could have been alot better
+  - I should have really thought about the mechanics that the program would need, and exactly what those mechanics would need to be able to work
 
 # User Guide
 How To Play:
