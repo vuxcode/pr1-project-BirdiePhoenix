@@ -101,9 +101,9 @@ For example:
   - Changed so the player turns now shows in HTML in the info text at the top instead of showing up as prompts  
   
 - 2025-04-12 11.30 Worked for 0.5 hour
- - Added a textbox
- - Made it possible to change the second infotext
- - Changed the prompt that asked for what piece to innerHTML
+  - Added a textbox
+  - Made it possible to change the second infotext
+  - Changed the prompt that asked for what piece to innerHTML
 
 - 2025-04-13 22.00 Worked for 1.5 hours
  - Added 1 button and changed 1 button
