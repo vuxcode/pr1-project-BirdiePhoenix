@@ -20,7 +20,7 @@ The final program is not the goal! The aim of the project is to show how you hav
 
 # Project Summary
 - Presentation:
-  - Write text! Press buttons! Take the enemy king!
+  - Write text! Press buttons! Take the enemy king! <br>
     Just like in any game of chess you can jump over people with horses, convert them with bishops or run them over with towers! And did I mention, ALOT of pawns!
     Last but not the least, go almost anywhere you want, with the QUEEN!
     Oh, and please don't forget to protect your king.
