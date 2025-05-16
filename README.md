@@ -19,9 +19,21 @@ The final program is not the goal! The aim of the project is to show how you hav
 - Buttons if time    
 
 # Project Summary
-- Presentation
-  - A chess game
+- Presentation:
+  - Write text! Press buttons! Take the enemy king!
+    Just like in any game of chess you can jump over people with horses, convert them with bishops or run them over with towers! And did I mention, ALOT of pawns!
+    Last but not the least, go almost anywhere you want, with the QUEEN!
+    Oh, and please don't forget to protect your king.
+    (no visuals included)
 
+- Reflection:
+  - My experience with this project has been alot of ups and downs. It has been fun and really annoying at the same time. To solve all the problems that I've encountered on the way, has been very frustrating but so rewarding when I finally solved them. I feel that this project has given me the oppertunity to think like an engineer and I have learned a lot about coding.
+  - Things I've learned:
+    - How to use code to make a program work as intended
+    - You should always plan your project thoroughly to make the process easier and more effective
+    - The easiest way isn't always the best way
+    - Find a way to help you visualize the code, like with the help of a notebook
+  
 - Improvements:
   - The main thing to improve if I had more time would be the visuals of the game. Instead of having a HTML based game it would be a much better experience for the players if their was an actual board on the screen, with pieces you could move by dragging them or pushing them and the squares. To be able to this I would need much more knowledge in webbutveckling and HTML code.
   - Another thing to improve would be to show on the screen all the square names. This is probably something I could have figured out, without any further knowledge, but the only way I could think of right now is to include those in the array which would mean I had to change the loops, so they don't check those elements.
