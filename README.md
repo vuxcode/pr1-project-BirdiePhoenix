@@ -21,9 +21,9 @@ The final program is not the goal! The aim of the project is to show how you hav
 # Project Summary
 - Presentation:
   - Write text! Press buttons! Take the enemy king! <br>
-    Just like in any game of chess you can jump over people with horses, convert them with bishops or run them over with towers! And did I mention, ALOT of pawns!
-    Last but not the least, go almost anywhere you want, with the QUEEN!
-    Oh, and please don't forget to protect your king.
+    Just like in any game of chess you can jump over people with horses, convert them with bishops or run them over with towers! And did I mention, ALOT of pawns! <br>
+    Last but not the least, go almost anywhere you want, with the QUEEN! <br>
+    Oh, and please don't forget to protect your king. <br>
     (no visuals included)
 
 - Reflection:
@@ -59,13 +59,13 @@ The final program is not the goal! The aim of the project is to show how you hav
 # User Guide
 How To Play:
 
-Uppercase is the black pieces and lowercase is the white pieces.
-P = Pawn,
-R = Rook,
-N = Knight,
-B = Bishop,
-Q = Queen,
-KI = King.
+Uppercase is the black pieces and lowercase is the white pieces. <br>
+P = Pawn <br>
+R = Rook <br>
+N = Knight <br>
+B = Bishop <br>
+Q = Queen <br>
+KI = King <br>
 
 1. Press Start Game
 2. Write what piece you want to move. (use the letter of the piece and the number to speciefy which of those pieces you want to move)
@@ -76,10 +76,10 @@ KI = King.
    -Press Yes or No
    -Press what rook you want to use in the Castling (r1. r2, R1, R2)
 7. When reaching the edge of the board with a pawn, you may upgrade it
-   -Write what kind of piece you want to upgrade the pawn into.
-     R = Rook,
-     N = Knight,
-     B = Bishop,
-     Q = Queen.
+   -Write what kind of piece you want to upgrade the pawn into. <br>
+     R = Rook <br>
+     N = Knight <br>
+     B = Bishop <br>
+     Q = Queen
 8. When a player is in Check Mate, press Restart Game if you want to play again
 
